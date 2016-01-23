@@ -12,7 +12,7 @@ var neighborhoods = [
 {lat: -29.785487, lng: 31.020924, title: "bro", content: 'you'}
 ];
 // function to initialise google map
-function initMap() {
+	function initMap() {
 	// initialise map with coords and zoom level
 	var durban = new google.maps.LatLng(-29.728146, 31.083943);
 	map = new google.maps.Map(document.getElementById('map'), {
@@ -21,15 +21,19 @@ function initMap() {
 	});
 }
 // implement simple marker with timeout
-function addMarkerWithTimeout(position, timeout) {
+function addMarkerWithTimeout(position, timeout, index) {
 	window.setTimeout(function() {
+		// create markers
 		markers.push(new google.maps.Marker({
 		position: position,
 		map: map,
 		title: position.title,
 		animation: google.maps.Animation.DROP
 		}))
-		//console.log(markers.length - 1)
+		// create click listeners for each marker based on index
+		markers[index].addListener('click', function(){
+		infowindow[index].open(map, markers[index]);
+		});
 	}, timeout);
 
 }
@@ -46,19 +50,14 @@ function drop() {
 	clearMarkers();
 	// loop over array of objects containing lat and long key:values and create markers
 	for (var i = 0; i < neighborhoods.length; i++) {
-		// the following function creates markers with initial delay (timeout to execution)
-		addMarkerWithTimeout(neighborhoods[i], i * 200);
 		// create infowindow objects for each marker
 		infowindow.push(new google.maps.InfoWindow({
 			content: neighborhoods[i].content
 		}));
-		// IIFE passing in current i variable as j. Timeout function ensures listener is added after markers are created
-		(function(j){
-			window.setTimeout(function(){
-					markers[j].addListener('click', function(){
-					infowindow[j].open(map, markers[j]);
-				});
-			}, j * 250);
-		})(i)
+		// the following function creates markers with initial delay (timeout to execution), passing in i
+		addMarkerWithTimeout(neighborhoods[i], i * 200, i);
 	}
 }
+
+
+
