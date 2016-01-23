@@ -1,0 +1,20 @@
+<!--
+Checklist:
+
+[x] Async javascript load for google map APIs
+
+ -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Do Durban - activity finder</title>
+		<link rel="stylesheet" href="css/style.css">
+		<script src="js/app.js"></script>
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM&callback=initMap"></script> <!-- defer attr ensures html parsing is not interuppted; js execution will occur after html parsing -->
+	</head>
+	<body>
+		<button type='button' value='click me' onclick="drop();">Click me</button>
+		<div id='map'></div>
+	</body>
+</html>
