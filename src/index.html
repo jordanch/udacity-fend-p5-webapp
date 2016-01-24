@@ -2,6 +2,8 @@
 Checklist:
 
 [x] Async javascript load for google map APIs
+[ ] Error handling for google maps API
+[ ] JSON file for neighborhood areas on jordancolehunt.co.za domain
 
  -->
 <!DOCTYPE html>
@@ -12,7 +14,17 @@ Checklist:
 		<link rel="stylesheet" href="css/style.css">
 		<script src="js/lib/jquery-2.2.0.min.js"></script>
 		<script src="js/app.js"></script>
-		<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM&callback=initMap"></script> <!-- defer attr ensures html parsing is not interuppted; js execution will occur after html parsing -->
+		<script async>
+			var url = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM&callback=initMap";
+			//defer attr ensures html parsing is not interuppted; js execution will occur after html parsing
+			$.getScript(url)
+			//, function(data, textStatus, jqxhr){})
+				.done(function(){
+					console.log('load performed');
+				}).fail(function(){
+					console.log('load faulty');
+			});
+		</script>
 	</head>
 	<body>
 		<button type='button' value='click me' onclick="drop();">Click me</button>
