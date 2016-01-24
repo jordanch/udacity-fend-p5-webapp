@@ -12,77 +12,89 @@
 // function jsonCallback(data) {
 // 	console.log(data);
 // }
+function init() {
 
-// global variables
-var map;
-var markers = [];
-var infowindow = [];
-var neighborhoods = [];
-// jQuery function to get JSON which parses it into JS Object literal
-// for loop required to push each object into array sequentially
-/*
-	1. TO DO: refactor for loop into forEach method
-	2. Change error handling to notify user about failure
-*/
-var neighborhoodsJSON = $.getJSON("js/data/data.json", function(data){
-	var length = data.neighborhoods.length;
-	for (var i = 0; i < length; i++){
-		neighborhoods.push(data.neighborhoods[i]);
-	}
-}).fail(function() {
-	console.log('failed to load neighborhood data');
-});
-// function to initialise google map
+	// function to initialise google map
+	var map;
 	function initMap() {
-	// initialise map with coords and zoom level
-	var durban = new google.maps.LatLng(-29.728146, 31.083943);
-	map = new google.maps.Map(document.getElementById('map'), {
-		center: durban,
-		zoom: 11
-	});
-}
-// implement simple marker with timeout
-function addMarkerWithTimeout(position, timeout, index) {
-	window.setTimeout(function() {
-		// create markers
-		markers.push(new google.maps.Marker({
-		position: position,
-		map: map,
-		title: position.title,
-		animation: google.maps.Animation.DROP
-		}))
-		// create click listeners for each marker based on index
-		markers[index].addListener('click', function(){
-		infowindow[index].open(map, markers[index]);
+		// initialise map with coords and zoom level
+		var durban = new google.maps.LatLng(-29.728146, 31.083943);
+		map = new google.maps.Map(document.getElementById('map'), {
+			center: durban,
+			zoom: 11
 		});
-	}, timeout);
-
-}
-// function to clear markers
-function clearMarkers() {
-	for (var i = 0; i < markers.length; i++) {
-		markers[i].setMap(null);
+		console.log(map);
 	}
-	markers = [];
-}
-// function to init markers
-function drop() {
-	// first clear all markers
-	clearMarkers();
-	// loop over array of objects containing lat and long key:values and create markers
-	for (var i = 0; i < neighborhoods.length; i++) {
-		// create infowindow objects for each marker
-		infowindow.push(new google.maps.InfoWindow({
-			content: neighborhoods[i].content
-		}));
-		// the following function creates markers with initial delay (timeout to execution), passing in i
-		addMarkerWithTimeout(neighborhoods[i], i * 200, i);
+
+	initMap();
+
+	// modelview
+	function myAppModelView(map) {
+		var self = this;
+		self.markers = ko.observableArray([]);
+		self.infowindow = ko.observableArray([]);
+		self.neighborhoodsData = ko.observableArray([]);
+		self.mapData = map;
+		console.log(map);
+
+		// jQuery function to get JSON and parse it into JS Object literal
+		// for loop required to push each object into array sequentially
+		/*
+			1. TO DO: refactor for loop into forEach method
+			2. Change error handling to notify user about failure
+		*/
+
+		$.getJSON("js/data/data.json", function(data){
+			var length = data.neighborhoods.length;
+			for (var i = 0; i < length; i++){
+				self.neighborhoodsData.push(data.neighborhoods[i]);
+			}
+			console.log('succeeded in loading neighborhood data');
+		}).fail(function() {
+			console.log('failed to load neighborhood data');
+		});
+
+		// implement simple marker with timeout
+		self.addMarkerWithTimeout = function (position, timeout, index) {
+			window.setTimeout(function() {
+				// create markers
+
+				self.markers.push(new google.maps.Marker({
+					position: position,
+					map: self.mapData,
+					title: position.title,
+					animation: google.maps.Animation.DROP
+				}))
+				// create click listeners for each marker based on index
+				self.markers()[index].addListener('click', function(){
+				self.infowindow()[index].open(self.mapData, self.markers()[index]);
+				});
+			}, timeout);
+		}
+
+		// function to clear markers - working
+		self.clearMarkers = function() {
+			for (var i = 0; i < self.markers().length; i++) {
+				self.markers()[i].setMap(null);
+			}
+		self.markers([]);
+		}
+
+		// function to init markers
+		self.drop = function() {
+			// first clear all markers
+			self.clearMarkers();
+			// loop over array of objects containing lat and long key:values and create markers
+			for (var i = 0; i < self.neighborhoodsData().length; i++) {
+				// create infowindow objects for each marker
+				self.infowindow.push(new google.maps.InfoWindow({
+					content: self.neighborhoodsData()[i].content
+				}));
+				// the following function creates markers with initial delay (timeout to execution), passing in i
+				self.addMarkerWithTimeout(self.neighborhoodsData()[i], i * 200, i);
+			}
+		}
 	}
-}
 
-// modelview
-function myAppModelView() {
-
-}
-
-ko.applyBindings(new myAppModelView());
+	ko.applyBindings(new myAppModelView(map));
+};
