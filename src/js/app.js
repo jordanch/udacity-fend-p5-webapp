@@ -13,6 +13,10 @@
 // 	console.log(data);
 // }
 
+// global variables
+var map;
+var markers = [];
+var infowindow = [];
 var neighborhoods = [];
 // jQuery function to get JSON which parses it into JS Object literal
 // for loop required to push each object into array sequentially
@@ -28,21 +32,6 @@ var neighborhoodsJSON = $.getJSON("js/data/data.json", function(data){
 }).fail(function() {
 	console.log('failed to load neighborhood data');
 });
-
-
-
-
-var map;
-var markers = [];
-var infowindow = [];
-
-// create array of neighborhoods  areas
-// var neighborhoods = [
-// {lat: -29.748909, lng: 31.058702, title: "fuck", content: 'hi'},
-// {lat: -29.726029, lng: 31.084880, title: "yeah", content: 'how'},
-// {lat: -29.785487, lng: 31.020924, title: "bro", content: 'you'}
-// ];
-
 // function to initialise google map
 	function initMap() {
 	// initialise map with coords and zoom level
@@ -91,5 +80,9 @@ function drop() {
 	}
 }
 
+// modelview
+function myAppModelView() {
 
+}
 
+ko.applyBindings(new myAppModelView());

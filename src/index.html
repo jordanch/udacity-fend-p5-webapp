@@ -1,9 +1,19 @@
+
+
+
 <!--
+Credit to the following:
+
+* jQuery for jQuery library
+* Google for Google Maps API
+* Kiro Risk for Fuse.js
+
 Checklist:
 
 [x] Async javascript load for google map APIs
 [ ] Error handling for google maps API
 [ ] JSON file for neighborhood areas on jordancolehunt.co.za domain
+[ ] Minify files in prod folder; prod files in prod folder
 
  -->
 <!DOCTYPE html>
@@ -13,6 +23,8 @@ Checklist:
 		<title>Do Durban - activity finder</title>
 		<link rel="stylesheet" href="css/style.css">
 		<script src="js/lib/jquery-2.2.0.min.js"></script>
+		<script src="js/lib/knockout-3.4.0.js"></script> <!-- TO DO: Minify this -->
+		<script src="js/lib/fuse.min.js"></script>
 		<script src="js/app.js"></script>
 		<script async>
 			var url = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM&callback=initMap";
@@ -27,7 +39,10 @@ Checklist:
 		</script>
 	</head>
 	<body>
+		<!-- menu view -->
 		<button type='button' value='click me' onclick="drop();">Click me</button>
+		<button type='button' value='Open Menu' onclick=";">Open Menu</button>
+		<!-- map view -->
 		<div id='map'></div>
 	</body>
 </html>
