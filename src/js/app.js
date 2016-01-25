@@ -33,7 +33,6 @@ function init() {
 	function myAppModelView(map) {
 
 		var self = this;
-		//self.markers = ko.observableArray([]);
 		self.infowindow = ko.observableArray([]);
 		self.neighborhoodsData = ko.observableArray([]);
 		self.mapData = map;
@@ -63,18 +62,12 @@ function init() {
 				self.neighborhoodsData.push(new NeighborhoodSpot(data.neighborhoods[i].lat, data.neighborhoods[i].lng, data.neighborhoods[i].name, data.neighborhoods[i].content, data.neighborhoods[i].address, i));
 			}
 			console.log('succeeded in loading neighborhood data');
-			// log to debug neighborhoodData ko.oA
-			console.log(self.neighborhoodsData());
 		}).fail(function() {
 			console.log('failed to load neighborhood data');
 		});
 
 		// implement simple marker with timeout
 		self.addMarkerWithTimeout = function (NeighborhoodSpotObject, timeout, index) {
-			//console.log('test0');
-			//console.log(NeighborhoodSpotObject);
-			//console.log(self.mapData);
-			// set timeout before creating marker to create delayed drop effect
 			window.setTimeout(function() {
 				// create markers
 				var marker = ko.observable(new google.maps.Marker({
@@ -89,6 +82,8 @@ function init() {
 				self.neighborhoodsData()[index].marker.addListener('click', function(){
 					// when marker is clicked, open infowindow
 					self.neighborhoodsData()[index].infowindow.open(self.mapData, self.neighborhoodsData()[index].marker);
+					// when marker is clicked, set animation to bounce
+					self.animateBounce(NeighborhoodSpotObject);
 				});
 			}, timeout);
 		}
@@ -125,9 +120,20 @@ function init() {
 		}
 
 		// function to change marker's animation when selected
-		self.animateBounce = function() {
-			// assign current marker's index to index variable
-			var index = self.neighborhoodsData().indexOf(this);
+		self.animateBounce = function(that) {
+			// check to see if function has object parameter
+			if (that instanceof NeighborhoodSpot == true) {
+				// assign self2 to passed-in NeighborhoodSpot object
+				var self2 = that;
+				// if the marker clicked on is animating, exit function
+				if (self2.marker.getAnimation() == 1) return;
+				// else, call to removeAnimation function to remove all animations
+				else self.removeAnimations();
+				// then set current object's marker to bounce
+				self2.marker.setAnimation(google.maps.Animation.BOUNCE);
+				// exit function
+				return;
+			}
 			// if the marker clicked on is animating, exit function
 			if (this.marker.getAnimation() == 1) return;
 			// else, call to removeAnimation function
@@ -136,8 +142,8 @@ function init() {
 			this.marker.setAnimation(google.maps.Animation.BOUNCE);
 		}
 
-		// function to remove all marker animations
-		self.removeAnimations = function(index) {
+		// function to remove marker animations
+		self.removeAnimations = function() {
 			var length = self.neighborhoodsData().length;
 			var obj = self.neighborhoodsData();
 			// loop through Neighborhood marker objects
@@ -145,6 +151,21 @@ function init() {
 				obj[i].marker.setAnimation(null);
 			}
 		}
+
+		// close all info windows
+		self.closeInfoWindows = function() {
+			var length = self.neighborhoodsData().length;
+			var obj = self.neighborhoodsData();
+			// loop through Neighborhood marker objects
+			for (var i = 0; i < length; i++) {
+				obj[i].infowindow.close();
+			}
+		}
+
+		// apply style to selected list item
+		// self.selectListItem = function() {
+		// 	this.
+		// }
 	}
 
 	ko.applyBindings(new myAppModelView(map));
