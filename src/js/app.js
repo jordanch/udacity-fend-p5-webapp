@@ -83,13 +83,8 @@ function init() {
 					title: NeighborhoodSpotObject.name,
 					animation: google.maps.Animation.DROP
 				}));
-				console.log('test');
-				console.log(marker);
 				// extend NeighborhoodSpot object with marker property
 				self.neighborhoodsData()[index].marker = marker();
-
-				//console.log(self.neighborhoodsData()[index].marker);
-
 				// create click listeners for each marker based on index
 				self.neighborhoodsData()[index].marker.addListener('click', function(){
 					// when marker is clicked, open infowindow
@@ -129,6 +124,27 @@ function init() {
 			}
 		}
 
+		// function to change marker's animation when selected
+		self.animateBounce = function() {
+			// assign current marker's index to index variable
+			var index = self.neighborhoodsData().indexOf(this);
+			// if the marker clicked on is animating, exit function
+			if (this.marker.getAnimation() == 1) return;
+			// else, call to removeAnimation function
+			else self.removeAnimations();
+			// then set current object's marker to bounce
+			this.marker.setAnimation(google.maps.Animation.BOUNCE);
+		}
+
+		// function to remove all marker animations
+		self.removeAnimations = function(index) {
+			var length = self.neighborhoodsData().length;
+			var obj = self.neighborhoodsData();
+			// loop through Neighborhood marker objects
+			for (var i = 0; i < length; i++) {
+				obj[i].marker.setAnimation(null);
+			}
+		}
 	}
 
 	ko.applyBindings(new myAppModelView(map));

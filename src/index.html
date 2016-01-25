@@ -51,14 +51,11 @@ Checklist:
 					<form>
 						<label>Search:</label><input type='text'/><input type='submit' value='Submit'/>
 					</form>
+				</div>
 				<!-- menu sub view: list items -->
-				<div id='list_items'>
-					<ul data-bind='foreach: neighborhoodsData'>
-						<li data-bind='text: spotName'></li>
-					</ul>
+				<div id='list_items' data-bind='foreach: neighborhoodsData'>
+					<div class='list_spot_item'data-bind='text: spotName, click: $parent.animateBounce'></div>
 				</div>
-				</div>
-
 			</div>
 			<div class='col-9-12'>
 				<!-- map view -->
