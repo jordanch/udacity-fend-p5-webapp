@@ -45,6 +45,7 @@ function init() {
 			this.content = content;
 			this.address = address;
 			this.visible = ko.observable(true);
+			this.isSelected = ko.observable(false);
 			this.ID = id;
 			this.marker = null;
 		}
@@ -119,6 +120,13 @@ function init() {
 			}
 		}
 
+		self.clickListItem = function(that) {
+			this.isSelected(true); // is this necessary? maybe not unless functionality is implemented another way
+			self.animateBounce(that);
+			self.styleItem(that);
+
+		}
+
 		// function to change marker's animation when selected
 		self.animateBounce = function(that) {
 			// check to see if function has object parameter
@@ -134,12 +142,12 @@ function init() {
 				// exit function
 				return;
 			}
-			// if the marker clicked on is animating, exit function
-			if (this.marker.getAnimation() == 1) return;
-			// else, call to removeAnimation function
-			else self.removeAnimations();
-			// then set current object's marker to bounce
-			this.marker.setAnimation(google.maps.Animation.BOUNCE);
+			// // if the marker clicked on is animating, exit function
+			// if (this.marker.getAnimation() == 1) return;
+			// // else, call to removeAnimation function
+			// else self.removeAnimations();
+			// // then set current object's marker to bounce
+			// this.marker.setAnimation(google.maps.Animation.BOUNCE);
 		}
 
 		// function to remove marker animations
@@ -163,9 +171,13 @@ function init() {
 		}
 
 		// apply style to selected list item
-		// self.selectListItem = function() {
-		// 	this.
-		// }
+		self.styleItem = function(that) {
+			var index = self.neighborhoodsData.indexOf(that);
+			var node = $('#' + index);
+			//console.log(node[0]);
+			node.css("background-color", "red");
+			//node.style.backgroundColor = 'red';
+		}
 	}
 
 	ko.applyBindings(new myAppModelView(map));

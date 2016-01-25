@@ -54,7 +54,7 @@ Checklist:
 				</div>
 				<!-- menu sub view: list items -->
 				<div id='list_items' data-bind='foreach: neighborhoodsData'>
-					<div class='list_spot_item'data-bind='text: spotName, click: $parent.animateBounce'></div>
+					<div class='list_spot_item'data-bind='text: spotName, click: $parent.clickListItem, attr: {id: $index}'></div>
 				</div>
 			</div>
 			<div class='col-9-12'>
