@@ -14,8 +14,9 @@
 // }
 function init() {
 
-	// function to initialise google map
 	var map;
+
+	// function to initialise google map
 	function initMap() {
 		// initialise map with coords and zoom level
 		var durban = new google.maps.LatLng(-29.728146, 31.083943);
@@ -23,19 +24,20 @@ function init() {
 			center: durban,
 			zoom: 11
 		});
-		console.log(map);
 	}
 
+	// initialise google map
 	initMap();
 
 	// modelview
 	function myAppModelView(map) {
+
 		var self = this;
 		self.markers = ko.observableArray([]);
 		self.infowindow = ko.observableArray([]);
 		self.neighborhoodsData = ko.observableArray([]);
+		self.locationData = ko.observable(); // individial location objects
 		self.mapData = map;
-		console.log(map);
 
 		// jQuery function to get JSON and parse it into JS Object literal
 		// for loop required to push each object into array sequentially
@@ -50,6 +52,7 @@ function init() {
 				self.neighborhoodsData.push(data.neighborhoods[i]);
 			}
 			console.log('succeeded in loading neighborhood data');
+			console.log(self.neighborhoodsData());
 		}).fail(function() {
 			console.log('failed to load neighborhood data');
 		});
@@ -58,7 +61,6 @@ function init() {
 		self.addMarkerWithTimeout = function (position, timeout, index) {
 			window.setTimeout(function() {
 				// create markers
-
 				self.markers.push(new google.maps.Marker({
 					position: position,
 					map: self.mapData,
@@ -72,7 +74,7 @@ function init() {
 			}, timeout);
 		}
 
-		// function to clear markers - working
+		// function to clear markers
 		self.clearMarkers = function() {
 			for (var i = 0; i < self.markers().length; i++) {
 				self.markers()[i].setMap(null);
@@ -82,7 +84,7 @@ function init() {
 
 		// function to init markers
 		self.drop = function() {
-			// first clear all markers
+			// clear all markers
 			self.clearMarkers();
 			// loop over array of objects containing lat and long key:values and create markers
 			for (var i = 0; i < self.neighborhoodsData().length; i++) {
@@ -94,6 +96,7 @@ function init() {
 				self.addMarkerWithTimeout(self.neighborhoodsData()[i], i * 200, i);
 			}
 		}
+
 	}
 
 	ko.applyBindings(new myAppModelView(map));

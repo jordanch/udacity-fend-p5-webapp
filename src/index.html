@@ -14,8 +14,8 @@ Checklist:
 [ ] Error handling for google maps API
 [ ] JSON file for neighborhood areas on jordancolehunt.co.za domain
 [ ] Minify files in prod folder; prod files in prod folder
-[ ] Structure code in MVVM pattern
-[ ] Can google map init function work if in VM?
+[x] Structure code in MVVM pattern
+[ ] Change drop function ot execute on load/window ready/goole map load
 
  -->
 <!DOCTYPE html>
@@ -41,10 +41,28 @@ Checklist:
 		<script defer src="js/app.js"></script>
 	</head>
 	<body>
-		<!-- menu view -->
-		<button data-bind="click: drop">Click me</button>
-		<button onclick="">Open Menu</button>
-		<!-- map view -->
-		<div id='map'></div>
+		<div class='grid'> <!-- wrapper div -->
+			<div class='col-3-12'>
+				<!-- menu view -->
+				<!-- menu sub view: search and nav functions -->
+				<div id='nav'>
+					<button data-bind="click: drop">Click me</button>
+					<button onclick="">Open Menu</button>
+					<form>
+						<label>Search:</label><input type='text'/><input type='submit' value='Submit'/>
+					</form>
+				<!-- menu sub view: list items -->
+				<div id='list_items'>
+					<!-- <ul data-bind='foreach: neighborhoodsData'>
+						<li data-bind='text: neighborhoodsData()'></li>
+					</ul> -->
+				</div>
+				</div>
+
+			</div>
+			<div class='col-9-12'>
+				<!-- map view -->
+				<div id='map'></div>
+			</div>
 	</body>
 </html>

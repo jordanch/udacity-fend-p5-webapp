@@ -6,4 +6,29 @@ html, body {
 
 #map {
 	height: 100%;
+	width: 100%;
+}
+
+[class *='col-'] {
+	float: left;
+}
+
+.col-3-12 {
+	width: 25%;
+	height: 1000px;
+}
+
+.col-9-12 {
+	width: 75%;
+	height: 1000px;
+}
+
+#nav {
+	height: 50px;
+	background-color: grey;
+}
+
+#list_items {
+	height: 100%;
+	background-color: orange;
 }
