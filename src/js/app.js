@@ -33,11 +33,22 @@ function init() {
 	function myAppModelView(map) {
 
 		var self = this;
-		self.markers = ko.observableArray([]);
+		//self.markers = ko.observableArray([]);
 		self.infowindow = ko.observableArray([]);
 		self.neighborhoodsData = ko.observableArray([]);
-		self.locationData = ko.observable(); // individial location objects
 		self.mapData = map;
+
+		// constructor for location object
+		function NeighborhoodSpot(lat, lng, name, content, address, id) {
+			this.lat = lat;
+			this.lng = lng;
+			this.spotName = name;
+			this.content = content;
+			this.address = address;
+			this.visible = ko.observable(true);
+			this.ID = id;
+			this.marker = null;
+		}
 
 		// jQuery function to get JSON and parse it into JS Object literal
 		// for loop required to push each object into array sequentially
@@ -49,50 +60,71 @@ function init() {
 		$.getJSON("js/data/data.json", function(data){
 			var length = data.neighborhoods.length;
 			for (var i = 0; i < length; i++){
-				self.neighborhoodsData.push(data.neighborhoods[i]);
+				self.neighborhoodsData.push(new NeighborhoodSpot(data.neighborhoods[i].lat, data.neighborhoods[i].lng, data.neighborhoods[i].name, data.neighborhoods[i].content, data.neighborhoods[i].address, i));
 			}
 			console.log('succeeded in loading neighborhood data');
+			// log to debug neighborhoodData ko.oA
 			console.log(self.neighborhoodsData());
 		}).fail(function() {
 			console.log('failed to load neighborhood data');
 		});
 
 		// implement simple marker with timeout
-		self.addMarkerWithTimeout = function (position, timeout, index) {
+		self.addMarkerWithTimeout = function (NeighborhoodSpotObject, timeout, index) {
+			//console.log('test0');
+			//console.log(NeighborhoodSpotObject);
+			//console.log(self.mapData);
+			// set timeout before creating marker to create delayed drop effect
 			window.setTimeout(function() {
 				// create markers
-				self.markers.push(new google.maps.Marker({
-					position: position,
+				var marker = ko.observable(new google.maps.Marker({
+					position: NeighborhoodSpotObject,
 					map: self.mapData,
-					title: position.title,
+					title: NeighborhoodSpotObject.name,
 					animation: google.maps.Animation.DROP
-				}))
+				}));
+				console.log('test');
+				console.log(marker);
+				// extend NeighborhoodSpot object with marker property
+				self.neighborhoodsData()[index].marker = marker();
+
+				//console.log(self.neighborhoodsData()[index].marker);
+
 				// create click listeners for each marker based on index
-				self.markers()[index].addListener('click', function(){
-				self.infowindow()[index].open(self.mapData, self.markers()[index]);
+				self.neighborhoodsData()[index].marker.addListener('click', function(){
+					// when marker is clicked, open infowindow
+					self.neighborhoodsData()[index].infowindow.open(self.mapData, self.neighborhoodsData()[index].marker);
 				});
 			}, timeout);
 		}
 
 		// function to clear markers
 		self.clearMarkers = function() {
-			for (var i = 0; i < self.markers().length; i++) {
-				self.markers()[i].setMap(null);
+			// get length of self.neighborhoodsData() observ array
+			var length = self.neighborhoodsData().length;
+			// loop over array
+			for (var i = 0; i < length; i++) {
+				// check to see if markers exist
+				if (self.neighborhoodsData()[i].marker != null){
+					// if they dont, set marker's map property to null
+					self.neighborhoodsData()[i].marker.setMap(null);
+				}
 			}
-		self.markers([]);
 		}
 
 		// function to init markers
 		self.drop = function() {
 			// clear all markers
 			self.clearMarkers();
-			// loop over array of objects containing lat and long key:values and create markers
+			// loop over array of NeighborhoodSpot objects
 			for (var i = 0; i < self.neighborhoodsData().length; i++) {
-				// create infowindow objects for each marker
-				self.infowindow.push(new google.maps.InfoWindow({
+				// create infowindow objects for each marker as property on NeighborhoodSpot object in observ array
+				var infowin = new google.maps.InfoWindow({
 					content: self.neighborhoodsData()[i].content
-				}));
-				// the following function creates markers with initial delay (timeout to execution), passing in i
+				})
+				// extend NeighborhoodSpot object with property for infowindow object
+				self.neighborhoodsData()[i].infowindow = infowin;
+				// the following function creates markers with initial delay (timeout to execution), passing in 1) NeighborhoodSpot object 2) delay algorithm 3) index
 				self.addMarkerWithTimeout(self.neighborhoodsData()[i], i * 200, i);
 			}
 		}

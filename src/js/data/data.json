@@ -1,7 +1,7 @@
 {
 	"neighborhoods": [
-		{"lat": -29.748909, "lng": 31.058702, "title": "fuck", "content": "hi"},
-		{"lat": -29.726029, "lng": 31.084880, "title": "yeah", "content": "how"},
-		{"lat": -29.785487, "lng": 31.020924, "title": "bro", "content": "you"}
+		{"lat": -29.748909, "lng": 31.058702, "name": "Home", "content": "this is my home", "address": "62 Chartwell Drive"},
+		{"lat": -29.726029, "lng": 31.084880, "name": "The George", "content": "this is my watering hole", "address": "12 Chartwell Drive"},
+		{"lat": -29.785487, "lng": 31.020924, "name": "@ Coffee", "content": "this is where I get pumped", "address": "89 North Coast Road"}
 	]
 }
