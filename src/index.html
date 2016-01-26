@@ -48,8 +48,8 @@ Checklist:
 				<div id='nav'>
 					<button data-bind="click: drop">Click me</button>
 					<button onclick="">Open Menu</button>
-					<form>
-						<label>Search:</label><input type='text'/><input type='submit' value='Submit'/>
+					<form data-bind='submit: searchButtonClick'>
+						<label>Search:</label><input type='text' data-bind='value: currentSearchValue'/><button type='submit'>Submit</button>
 					</form>
 				</div>
 				<!-- menu sub view: list items -->
