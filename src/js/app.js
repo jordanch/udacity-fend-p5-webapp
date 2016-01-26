@@ -1,3 +1,5 @@
+// refactor code so that var length = self.neighborhoodsData().length; is global
+
 /*	google maps API key: AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM
 	google maps API implementation
 	------------------------------------------------------------
@@ -62,13 +64,16 @@ function init() {
 			for (var i = 0; i < length; i++){
 				self.neighborhoodsData.push(new NeighborhoodSpot(data.neighborhoods[i].lat, data.neighborhoods[i].lng, data.neighborhoods[i].name, data.neighborhoods[i].content, data.neighborhoods[i].address, i));
 			}
+			self.dataLength = self.neighborhoodsData().length;
 			console.log('succeeded in loading neighborhood data');
 		}).fail(function() {
 			console.log('failed to load neighborhood data');
 		});
 
+
+
 		// implement simple marker with timeout
-		self.addMarkerWithTimeout = function (NeighborhoodSpotObject, timeout, index) {
+		self.addMarkerWithTimeout = function (NeighborhoodSpotObject, timeout, index) { // NeighborhoodSpotObject expects self.neighborhoodsData()[i]
 			window.setTimeout(function() {
 				// create markers
 				var marker = ko.observable(new google.maps.Marker({
@@ -85,6 +90,8 @@ function init() {
 					self.neighborhoodsData()[index].infowindow.open(self.mapData, self.neighborhoodsData()[index].marker);
 					// when marker is clicked, set animation to bounce
 					self.animateBounce(NeighborhoodSpotObject);
+					// when marker is clicked, corresponding list item must highlight
+					self.styleItem(NeighborhoodSpotObject);
 				});
 			}, timeout);
 		}
@@ -142,12 +149,6 @@ function init() {
 				// exit function
 				return;
 			}
-			// // if the marker clicked on is animating, exit function
-			// if (this.marker.getAnimation() == 1) return;
-			// // else, call to removeAnimation function
-			// else self.removeAnimations();
-			// // then set current object's marker to bounce
-			// this.marker.setAnimation(google.maps.Animation.BOUNCE);
 		}
 
 		// function to remove marker animations
@@ -172,11 +173,24 @@ function init() {
 
 		// apply style to selected list item
 		self.styleItem = function(that) {
+			//var length = self.neighborhoodsData().length;
 			var index = self.neighborhoodsData.indexOf(that);
 			var node = $('#' + index);
-			//console.log(node[0]);
-			node.css("background-color", "red");
-			//node.style.backgroundColor = 'red';
+			console.log(node.css('backgroundColor'));
+			// if list item is already red/selected, exit function
+			if (node.css('backgroundColor') === 'rgb(255, 0, 0)') {
+				return;
+			}
+			// else, if it isn't red, clear all other background colors and make current selection red
+			else {
+				// loop over items
+				var node2;
+				for (var i = 0; i < self.dataLength; i++) {
+					node2 = $('#' + i);
+					node2.css("background-color", 'inherit');
+				}
+				node.css("background-color", "red");
+			}
 		}
 	}
 
