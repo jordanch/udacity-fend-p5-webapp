@@ -46,7 +46,6 @@ Checklist:
 				<!-- menu view -->
 				<!-- menu sub view: search and nav functions -->
 				<div id='nav'>
-					<button data-bind="click: init">Click me</button>
 					<button onclick="">Open Menu</button>
 					<form data-bind='submit: searchButtonClick'>
 						<label>Search:</label><input type='text' data-bind='value: currentSearchValue'/><button type='submit'>Submit</button>
@@ -56,15 +55,12 @@ Checklist:
 				<div id='list_items' data-bind='foreach: neighborhoodsData'>
 					<div class='list_spot_item'data-bind='text: spotName, click: $parent.clickListItem, attr: {id: $index}, visible: visible'></div>
 				</div>
-				<!-- test search view -->
-				<div id='search_items'>
-
-				</div>
 			</div>
 			<div class='col-9-12'>
+				<div id='map_controls'>Use mousewheel to zoom. Click and hold to drag map position.</div>
 				<!-- map view -->
-				<div id='close'><button data-bind='click: closeInfoWindows'>x</button></div>
 				<div id='map'></div>
+				<div id='wait' data-bind='visible: mapIsLoading'>PLEASE WAIT FOR MAP TO LOAD</div>
 			</div>
 	</body>
 </html>

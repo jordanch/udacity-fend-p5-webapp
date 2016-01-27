@@ -47,6 +47,7 @@ function init() {
 		};
 		self.currentSearchValue = ko.observable('');
 		self.searchResults = ko.observable([]);
+		self.mapIsLoading = ko.observable(true);
 
 		// constructor for location object
 		function NeighborhoodSpot(lat, lng, name, content, address, id) {
@@ -55,8 +56,8 @@ function init() {
 			this.spotName = name;
 			this.content = content;
 			this.address = address;
-			this.visible = ko.observable(true); // test
-			this.isSelected = ko.observable(false);
+			this.visible = ko.observable(true); // starts off visible
+			this.isSelected = ko.observable(false); // starts off not selected
 			this.ID = id;
 			this.marker = null;
 		}
@@ -96,14 +97,29 @@ function init() {
 				self.neighborhoodsData()[index].marker = marker();
 				// create click listeners for each marker based on index
 				self.neighborhoodsData()[index].marker.addListener('click', function(){
-					// when marker is clicked, open infowindow
+					// when marker is clicked, close all other infowindows and open specific infowindow
+					self.closeInfoWindows();
 					self.neighborhoodsData()[index].infowindow.open(self.mapData, self.neighborhoodsData()[index].marker);
-					// when marker is clicked, set animation to bounce
+					// when marker is selected, animate with bounce
 					self.animateBounce(NeighborhoodSpotObject);
 					// when marker is clicked, corresponding list item must highlight
 					self.styleItem(NeighborhoodSpotObject);
+					// when marker is clicked, unselect other markers before marking current as true
+					self.switchSelectedMarkers();
+					// when marker is clicked, update isSelcted value to true
+					self.neighborhoodsData()[index].isSelected(true);
+
 				});
 			}, timeout);
+		}
+
+		// function to unselect markers
+		self.switchSelectedMarkers = function() {
+			for (var i = 0; i < self.dataLength; i++){
+				if (self.neighborhoodsData()[i].isSelected()){
+					self.neighborhoodsData()[i].isSelected(false);
+				}
+			}
 		}
 
 		// function to clear markers
@@ -142,10 +158,15 @@ function init() {
 		}
 
 		self.clickListItem = function(that) {
-			this.isSelected(true); // is this necessary? maybe not unless functionality is implemented another way
+			console.log(that.isSelected());
+			if (!that.isSelected()) {
+				self.closeInfoWindows();
+				self.switchSelectedMarkers();
+			}
+			that.isSelected(true);
+			that.infowindow.open(self.mapData, that.marker);
 			self.animateBounce(that);
 			self.styleItem(that);
-
 		}
 
 		// function to change marker's animation when selected
@@ -239,6 +260,7 @@ function init() {
 				for (var i = 0; i < self.dataLength; i++) {
 					self.neighborhoodsData()[i].visible(false);
 				}
+				self.resetAllItemStyles();
 				self.clearMarkers();
 				// set search result items to true/visible
 				for (var i = 0; i < length; i++) {
@@ -249,6 +271,7 @@ function init() {
 			}
 			// else return all items if user enters no string and clicks search/presses enter
 			else {
+				self.resetAllItemStyles();
 				// set all markers to visible, reset list item styling
 				for (var i = 0; i < self.dataLength; i++) {
 					self.neighborhoodsData()[i].visible(true);
@@ -257,6 +280,11 @@ function init() {
 				}
 			}
 		}
+
+		$(window).load(function(){
+			self.init();
+			self.mapIsLoading(false);
+		});
 	}
 
 	ko.applyBindings(new myAppModelView(map));
