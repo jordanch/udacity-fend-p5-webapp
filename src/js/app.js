@@ -17,6 +17,11 @@
 // function jsonCallback(data) {
 // 	console.log(data);
 // }
+
+// global scope
+//var updateMessage;
+//var test;
+
 function init() {
 
 	var map;
@@ -43,25 +48,42 @@ function init() {
 		var self = this;
 		self.infowindow = ko.observableArray([]);
 		self.neighborhoodsData = ko.observableArray([]);
+		self.searchCategories = ko.observableArray(['','Food', 'Club']);
 		self.mapData = map;
 		self.searchOptions = {
-			keys: ['spotName'],
+			keys: ['spotName', 'filter'],
 			id: 'ID' // the ID is the same is the object's index PLUS 1
 		};
-		self.searchOptions2 = { // this is used for filter/category search results
-			keys: ['filter'],
-			id: 'ID'
-		}
+		// self.searchOptions2 = { // this is used for filter/category search results
+		// 	keys: ['filter'],
+		// 	id: 'ID'
+		// }
 		self.currentSearchValue = ko.observable('');
+		self.currentDropSearchValue = ko.observable(''); // initially nothing is selected
 		self.searchResults = ko.observable([]);
 		self.mapIsLoading = ko.observable(true);
+		self.loadingMessage = ko.observable('PLEASE WAIT FOR MAP TO LOAD');
+		//test = self.loadingMessage();
+
+		// function to update currentDropSearchValue
+		self.updateDropSearchValue = function(data) {
+			//self.currentDropSearchValue('')
+			console.log(data);
+		}
+		// update loading message if google maps fails
+		updateMessage = function() {
+			self.loadingMessage('COULD NOT LOAD GOOGLE MAPS, PLEASE TRY AGAIN');
+		}
 
 		// constructor for location object
 		function NeighborhoodSpot(lat, lng, name, content, address, filter, id) {
 			this.lat = lat;
 			this.lng = lng;
 			this.spotName = name;
-			this.content = content + '<br>' + address;
+			this.content = content + '<br><br>' + address + '<br><br>' +
+				'<a href="https://maps.googleapis.com/maps/api/streetview?size=300x300&location=' +
+				this.lat + ',' + this.lng + '&fov=90&heading=235&pitch=10&key=AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM" target="_blank">' +
+				'Picture of ' + this.spotName + '</a>';
 			this.address = address;
 			this.visible = ko.observable(true); // starts off visible
 			this.isSelected = ko.observable(false); // starts off not selected
@@ -116,6 +138,7 @@ function init() {
 					self.switchSelectedMarkers();
 					// when marker is clicked, update isSelcted value to true
 					self.neighborhoodsData()[index].isSelected(true);
+					// set infowindow links
 
 				});
 			}, timeout);
@@ -243,11 +266,19 @@ function init() {
 			}
 		}
 
+		// function to clear current search results
+		self.clearSearch = function() {
+			self.currentDropSearchValue('');
+			self.searchButtonClick();
+		}
+
 		// search functionality --- http://kiro.me/projects/fuse.html
 		// this function searches through NeighborhoodSpot objects using a search object listing search keys and returns an array with identifiers
 		self.searchFunc = function() { // this library freaks out when an object's ID is 0, so all IDs are index + 1
-			var f = new Fuse(self.neighborhoodsData(), self.searchOptions)
-			self.searchResults(f.search(self.currentSearchValue()));
+			var f = new Fuse(self.neighborhoodsData(), self.searchOptions);
+			//self.searchResults(f.search(self.currentSearchValue()));
+			self.searchResults(f.search(self.currentDropSearchValue()));
+			console.log(self.currentDropSearchValue());
 			console.log(self.searchResults());
 		}
 

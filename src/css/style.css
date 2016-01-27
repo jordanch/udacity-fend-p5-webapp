@@ -16,6 +16,7 @@ html, body {
 .col-2-12 {
 	width: 16.6%;
 	/*height: 1000px;*/
+	border-right: 1px solid black;
 }
 
 .col-10-12 {
@@ -35,6 +36,10 @@ html, body {
 
 .list_spot_item {
 	text-align: center;
+}
+
+.list_spot_item:hover {
+	color: white;
 }
 
 /*.active_list_item {

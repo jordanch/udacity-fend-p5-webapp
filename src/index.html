@@ -7,6 +7,7 @@ Credit to the following:
 * jQuery for jQuery library
 * Google for Google Maps API
 * Kiro Risk for Fuse.js
+* leanModal.js -- http://leanmodal.finelysliced.com.au/#
 
 Checklist:
 
@@ -34,10 +35,11 @@ Checklist:
 			$.getScript(url)
 			//, function(data, textStatus, jqxhr){})
 				.done(function(){
-					console.log('Google Maps API load successful');
+					console.log('Google Maps load successful');
 				}).fail(function(){
-					console.log('Google Maps API load faulty');
-			});
+					console.log('Google Maps load faulty');
+					//updateMessage();
+				});
 		</script>
 		<script defer src="js/app.js"></script>
 	</head>
@@ -49,6 +51,10 @@ Checklist:
 				<div id='nav'>
 					<form data-bind='submit: searchButtonClick'>
 						<label>Search:</label><input id='search_bar' type='text' data-bind='value: currentSearchValue'/><button type='submit'>Submit</button>
+						<select data-bind='options: searchCategories, value: currentDropSearchValue'>
+							<!-- <option data-bind="attr: {value: $data}, text: $data, click: $parent.updateDropSearchValue($data)"></option> -->
+						</select>
+						<button type='submit' data-bind='click: clearSearch'>Clear search</button>
 					</form>
 				</div>
 				<!-- menu sub view: list items -->
@@ -59,7 +65,7 @@ Checklist:
 			<div class='col-10-12 window_size'>
 				<!-- map view -->
 				<div id='map'></div>
-				<div id='wait' data-bind='visible: mapIsLoading'>PLEASE WAIT FOR MAP TO LOAD</div>
+				<div id='wait' data-bind='visible: mapIsLoading, text: loadingMessage'></div>
 			</div>
 	</body>
 </html>
