@@ -50,12 +50,26 @@ Checklist:
 				<!-- menu sub view: search and nav functions -->
 				<div id='nav'>
 					<form data-bind='submit: searchButtonClick'>
-						<label>Search:</label><input id='search_bar' type='text' data-bind='value: currentSearchValue'/><button type='submit'>Submit</button>
-						<select data-bind='options: searchCategories, value: currentDropSearchValue'>
-							<!-- <option data-bind="attr: {value: $data}, text: $data, click: $parent.updateDropSearchValue($data)"></option> -->
-						</select>
-						<button type='submit' data-bind='click: clearSearch'>Clear search</button>
+						<label>Filter using name:</label><input id='search_bar' type='text' data-bind='value: currentSearchValue'/>
+						<div>
+							<button type='submit'>Submit</button>
+						</div>
 					</form>
+					<form data-bind='submit: searchButtonClick2'>
+						<div>
+							<label>or category:</label>
+							<select data-bind='options: searchCategories, value: currentDropSearchValue'>
+							</select>
+							<div>
+								<button type='submit'>Submit</button>
+							</div>
+						</div>
+					</form>
+						<div>
+							<form  data-bind='click: clearSearch'>
+								<button type='submit'>Clear search</button>
+							</form>
+						</div>
 				</div>
 				<!-- menu sub view: list items -->
 				<div id='list_items' data-bind='foreach: neighborhoodsData'>

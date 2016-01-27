@@ -48,16 +48,16 @@ function init() {
 		var self = this;
 		self.infowindow = ko.observableArray([]);
 		self.neighborhoodsData = ko.observableArray([]);
-		self.searchCategories = ko.observableArray(['','Food', 'Club']);
+		self.searchCategories = ko.observableArray(['','Food', 'Club', 'Drinks']);
 		self.mapData = map;
 		self.searchOptions = {
-			keys: ['spotName', 'filter'],
+			keys: ['spotName'],
 			id: 'ID' // the ID is the same is the object's index PLUS 1
 		};
-		// self.searchOptions2 = { // this is used for filter/category search results
-		// 	keys: ['filter'],
-		// 	id: 'ID'
-		// }
+		self.searchOptions2 = { // this is used for filter/category search results
+			keys: ['filter'],
+			id: 'ID'
+		}
 		self.currentSearchValue = ko.observable('');
 		self.currentDropSearchValue = ko.observable(''); // initially nothing is selected
 		self.searchResults = ko.observable([]);
@@ -269,24 +269,37 @@ function init() {
 		// function to clear current search results
 		self.clearSearch = function() {
 			self.currentDropSearchValue('');
+			self.currentSearchValue('');
 			self.searchButtonClick();
 		}
 
 		// search functionality --- http://kiro.me/projects/fuse.html
+		// text input search functionality
 		// this function searches through NeighborhoodSpot objects using a search object listing search keys and returns an array with identifiers
 		self.searchFunc = function() { // this library freaks out when an object's ID is 0, so all IDs are index + 1
 			var f = new Fuse(self.neighborhoodsData(), self.searchOptions);
-			//self.searchResults(f.search(self.currentSearchValue()));
-			self.searchResults(f.search(self.currentDropSearchValue()));
-			console.log(self.currentDropSearchValue());
-			console.log(self.searchResults());
+			self.searchResults(f.search(self.currentSearchValue()));
 		}
 
+		// drop-down search functionality
+		self.searchFunc2 = function() {
+			var f = new Fuse(self.neighborhoodsData(), self.searchOptions2);
+			self.searchResults(f.search(self.currentDropSearchValue()));
+		}
+
+
+		// function to execute text input search
 		self.searchButtonClick = function() {
-			//console.log(self.currentSearchValue());
-			//console.log(self.searchOptions);
 			self.searchFunc();
 			self.setVisible();
+			//self.clearSearch();
+		}
+
+		// function to execute drop-down/category search
+		self.searchButtonClick2 = function() {
+			self.searchFunc2();
+			self.setVisible();
+			//self.clearSearch();
 		}
 
 		// function which uses the array of searchResults which contains index values to set objects to visible
