@@ -27,8 +27,11 @@ function init() {
 		var durban = new google.maps.LatLng(-29.728146, 31.083943);
 		map = new google.maps.Map(document.getElementById('map'), {
 			center: durban,
-			zoom: 11
+			zoom: 10
 		});
+
+		var windowHeight = window.innerHeight;
+		$('.window_size').css('height', windowHeight);
 	}
 
 	// initialise google map
@@ -45,21 +48,26 @@ function init() {
 			keys: ['spotName'],
 			id: 'ID' // the ID is the same is the object's index PLUS 1
 		};
+		self.searchOptions2 = { // this is used for filter/category search results
+			keys: ['filter'],
+			id: 'ID'
+		}
 		self.currentSearchValue = ko.observable('');
 		self.searchResults = ko.observable([]);
 		self.mapIsLoading = ko.observable(true);
 
 		// constructor for location object
-		function NeighborhoodSpot(lat, lng, name, content, address, id) {
+		function NeighborhoodSpot(lat, lng, name, content, address, filter, id) {
 			this.lat = lat;
 			this.lng = lng;
 			this.spotName = name;
-			this.content = content;
+			this.content = content + '<br>' + address;
 			this.address = address;
 			this.visible = ko.observable(true); // starts off visible
 			this.isSelected = ko.observable(false); // starts off not selected
 			this.ID = id;
 			this.marker = null;
+			this.filter = filter;
 		}
 
 		// jQuery function to get JSON and parse it into JS Object literal
@@ -72,7 +80,7 @@ function init() {
 		$.getJSON("js/data/data.json", function(data){
 			var length = data.neighborhoods.length;
 			for (var i = 0; i < length; i++){
-				self.neighborhoodsData.push(new NeighborhoodSpot(data.neighborhoods[i].lat, data.neighborhoods[i].lng, data.neighborhoods[i].name, data.neighborhoods[i].content, data.neighborhoods[i].address, i + 1));
+				self.neighborhoodsData.push(new NeighborhoodSpot(data.neighborhoods[i].lat, data.neighborhoods[i].lng, data.neighborhoods[i].name, data.neighborhoods[i].content, data.neighborhoods[i].address, data.neighborhoods[i].filter, i + 1));
 				console.log('------data check------ \n' + self.neighborhoodsData()[i].ID + '\n----------------------');
 			}
 			self.dataLength = self.neighborhoodsData().length;
@@ -256,6 +264,7 @@ function init() {
 			var indexValue;
 			// if there are search results i.e. user has search string
 			if (length > 0) {
+				self.closeInfoWindows();
 				// set all to false before setting search results to true
 				for (var i = 0; i < self.dataLength; i++) {
 					self.neighborhoodsData()[i].visible(false);
@@ -271,6 +280,7 @@ function init() {
 			}
 			// else return all items if user enters no string and clicks search/presses enter
 			else {
+				self.closeInfoWindows();
 				self.resetAllItemStyles();
 				// set all markers to visible, reset list item styling
 				for (var i = 0; i < self.dataLength; i++) {

@@ -23,6 +23,7 @@ Checklist:
 	<head>
 		<meta charset="UTF-8">
 		<title>Do Durban - activity finder</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="css/style.css">
 		<script src="js/lib/knockout-3.4.0.js"></script> <!-- TO DO: Minify this -->
 		<script src="js/lib/jquery-2.2.0.min.js"></script>
@@ -42,22 +43,20 @@ Checklist:
 	</head>
 	<body>
 		<div class='grid'> <!-- wrapper div -->
-			<div class='col-3-12'>
+			<div class='col-2-12 window_size'>
 				<!-- menu view -->
 				<!-- menu sub view: search and nav functions -->
 				<div id='nav'>
-					<button onclick="">Open Menu</button>
 					<form data-bind='submit: searchButtonClick'>
-						<label>Search:</label><input type='text' data-bind='value: currentSearchValue'/><button type='submit'>Submit</button>
+						<label>Search:</label><input id='search_bar' type='text' data-bind='value: currentSearchValue'/><button type='submit'>Submit</button>
 					</form>
 				</div>
 				<!-- menu sub view: list items -->
 				<div id='list_items' data-bind='foreach: neighborhoodsData'>
-					<div class='list_spot_item'data-bind='text: spotName, click: $parent.clickListItem, attr: {id: $index}, visible: visible'></div>
+					<div class='list_spot_item' data-bind='text: spotName, click: $parent.clickListItem, attr: {id: $index}, visible: visible'></div>
 				</div>
 			</div>
-			<div class='col-9-12'>
-				<div id='map_controls'>Use mousewheel to zoom. Click and hold to drag map position.</div>
+			<div class='col-10-12 window_size'>
 				<!-- map view -->
 				<div id='map'></div>
 				<div id='wait' data-bind='visible: mapIsLoading'>PLEASE WAIT FOR MAP TO LOAD</div>

@@ -1,7 +1,11 @@
 {
 	"neighborhoods": [
-		{"lat": -29.748909, "lng": 31.058702, "name": "Home", "content": "this is my home", "address": "62 Chartwell Drive"},
-		{"lat": -29.726029, "lng": 31.084880, "name": "The George", "content": "this is my watering hole", "address": "12 Chartwell Drive"},
-		{"lat": -29.785487, "lng": 31.020924, "name": "@ Coffee", "content": "this is where I get pumped", "address": "89 North Coast Road"}
+		{"lat": -29.727392, "lng": 31.084755, "name": "The George", "content": "This is the famous The George bar.", "address": "Shop 15, Lighthouse Mall, Chartwell Dr, Durban, 4320", "filter": "Drinks"},
+		{"lat": -29.820107, "lng": 31.028017, "name": "S43", "content": "Arty food and the beer is brewed by the company.", "address": "43 Station Dr, Berea, 4001", "filter": "Food"},
+		{"lat": -29.846833, "lng": 30.994312, "name": "Unity", "content": "Lively brasserie attracting young crowds, offering craft beers and sustainably sourced comfort food.", "address": "89 North Coast Road", "filter": "Food"},
+		{"lat": -29.862150, "lng": 31.004252, "name": "Origin", "content": "Great club with four dance floors, insane music and great decor.", "address": "9 Clark Rd, Berea, 4083", "filter": "Club"},
+		{"lat": -29.863277, "lng": 30.996724, "name": "The Corner Cafe", "content": "This laid-back, eco-friendly cafe with photo wall mural offers modern Mediterranean dishes.", "address": "197 Brand Rd, Durban, 4001", "filter": "Food"},
+		{"lat": -29.838939, "lng": 31.019077, "name": "Freedom Cafe", "content": "Glass walls have been added to converted shipping containers in this hip cafe and grill with garden.", "address": "34 St Marys Ave, Morningside, Durban, 4001", "filter": "Food"},
+		{"lat": -29.831953, "lng": 31.015930, "name": "Spiga Dora", "content": "Great restaurant, great food, great vibe!", "address": "200 Florida Rd, Durban, 4001", "filter": "Food"}
 	]
 }

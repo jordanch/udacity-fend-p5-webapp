@@ -13,18 +13,18 @@ html, body {
 	float: left;
 }
 
-.col-3-12 {
-	width: 25%;
-	height: 1000px;
+.col-2-12 {
+	width: 16.6%;
+	/*height: 1000px;*/
 }
 
-.col-9-12 {
-	width: 75%;
-	height: 1000px;
+.col-10-12 {
+	width: 83.3%;
+	/*height: 1000px;*/
 }
 
 #nav {
-	height: 50px;
+	height: auto;
 	background-color: grey;
 }
 
@@ -41,17 +41,6 @@ html, body {
 	background-color: red;
 }*/
 
-#map_controls {
-
-	background-color: rgba(255,0,0,0.2);
-	height: 25px;
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	z-index: 10;
-
-}
-
 #wait {
 	position: absolute;
 	top: 50%;
@@ -63,4 +52,31 @@ html, body {
 	color: white;
 	font-size: 30px;
 	text-align: center;
+}
+
+@media screen and (max-width: 640px) {
+	.col-2-12 {
+		width: 40%;
+	}
+
+	.col-10-12 {
+		width: 60%;
+	}
+
+	#wait {
+		width: auto;
+		height: auto;
+	}
+
+	.list_spot_item  {
+		font-size: 15px;
+	}
+
+	#nav {
+		height: auto;
+	}
+
+	#search_bar {
+		width: 120px;
+	}
 }
