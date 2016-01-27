@@ -46,7 +46,7 @@ Checklist:
 				<!-- menu view -->
 				<!-- menu sub view: search and nav functions -->
 				<div id='nav'>
-					<button data-bind="click: drop">Click me</button>
+					<button data-bind="click: init">Click me</button>
 					<button onclick="">Open Menu</button>
 					<form data-bind='submit: searchButtonClick'>
 						<label>Search:</label><input type='text' data-bind='value: currentSearchValue'/><button type='submit'>Submit</button>
@@ -54,7 +54,7 @@ Checklist:
 				</div>
 				<!-- menu sub view: list items -->
 				<div id='list_items' data-bind='foreach: neighborhoodsData'>
-					<div class='list_spot_item'data-bind='text: spotName, click: $parent.clickListItem, attr: {id: $index}'></div>
+					<div class='list_spot_item'data-bind='text: spotName, click: $parent.clickListItem, attr: {id: $index}, visible: visible'></div>
 				</div>
 				<!-- test search view -->
 				<div id='search_items'>

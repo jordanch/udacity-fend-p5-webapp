@@ -1,5 +1,8 @@
 // refactor code so that var length = self.neighborhoodsData().length; is global
 
+// implement functionality so that when object is visible, both the list item and the marker is visible.
+// implement functionality so that search results are ordered in terms of relativity to search
+
 /*	google maps API key: AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM
 	google maps API implementation
 	------------------------------------------------------------
@@ -39,10 +42,11 @@ function init() {
 		self.neighborhoodsData = ko.observableArray([]);
 		self.mapData = map;
 		self.searchOptions = {
-			keys: ['spotName', 'address'],
+			keys: ['spotName'],
 			id: 'ID' // the ID is the same is the object's index PLUS 1
 		};
 		self.currentSearchValue = ko.observable('');
+		self.searchResults = ko.observable([]);
 
 		// constructor for location object
 		function NeighborhoodSpot(lat, lng, name, content, address, id) {
@@ -51,7 +55,7 @@ function init() {
 			this.spotName = name;
 			this.content = content;
 			this.address = address;
-			this.visible = ko.observable(true);
+			this.visible = ko.observable(true); // test
 			this.isSelected = ko.observable(false);
 			this.ID = id;
 			this.marker = null;
@@ -110,14 +114,18 @@ function init() {
 			for (var i = 0; i < length; i++) {
 				// check to see if markers exist
 				if (self.neighborhoodsData()[i].marker != null){
-					// if they dont, set marker's map property to null
+					// if they do, set marker's map property to null
 					self.neighborhoodsData()[i].marker.setMap(null);
 				}
 			}
 		}
 
-		// function to init markers
-		self.drop = function() {
+		self.reactivateMarkers = function(i) {
+			self.neighborhoodsData()[i].marker.setMap(self.mapData);
+		}
+
+		// function to init markers and list items
+		self.init = function() {
 			// clear all markers
 			self.clearMarkers();
 			// loop over array of NeighborhoodSpot objects
@@ -179,7 +187,6 @@ function init() {
 
 		// apply style to selected list item
 		self.styleItem = function(that) {
-			//var length = self.neighborhoodsData().length;
 			var index = self.neighborhoodsData.indexOf(that);
 			var node = $('#' + index);
 			console.log(node.css('backgroundColor'));
@@ -199,24 +206,56 @@ function init() {
 			}
 		}
 
-		// self.tempObject = [
-		// 		{"lat": -29.748909, "lng": 31.058702, "spotName": "Home", "content": "this is my home", "address": "62 Chartwell Drive", "ID": 1},
-		// 		{"lat": -29.726029, "lng": 31.084880, "spotName": "The George", "content": "this is my watering hole", "address": "12 Chartwell Drive", "ID": 2},
-		// 		{"lat": -29.785487, "lng": 31.020924, "spotName": "@ Coffee", "content": "this is where I get pumped", "address": "89 North Coast Road", "ID": 3}
-		// ];
+		self.resetAllItemStyles = function() {
+			var node;
+			for (var i = 0; i < self.dataLength; i++) {
+				node = $('#' + i);
+				node.css("background-color", 'inherit');
+			}
+		}
 
 		// search functionality --- http://kiro.me/projects/fuse.html
+		// this function searches through NeighborhoodSpot objects using a search object listing search keys and returns an array with identifiers
 		self.searchFunc = function() { // this library freaks out when an object's ID is 0, so all IDs are index + 1
-			console.log('search array: \n' + self.neighborhoodsData());
 			var f = new Fuse(self.neighborhoodsData(), self.searchOptions)
-			var result = f.search(self.currentSearchValue());
-			console.log(result);
+			self.searchResults(f.search(self.currentSearchValue()));
+			console.log(self.searchResults());
 		}
 
 		self.searchButtonClick = function() {
-			console.log(self.currentSearchValue());
-			console.log(self.searchOptions);
+			//console.log(self.currentSearchValue());
+			//console.log(self.searchOptions);
 			self.searchFunc();
+			self.setVisible();
+		}
+
+		// function which uses the array of searchResults which contains index values to set objects to visible
+		self.setVisible = function() {
+			var length = self.searchResults().length;
+			var indexValue;
+			// if there are search results i.e. user has search string
+			if (length > 0) {
+				// set all to false before setting search results to true
+				for (var i = 0; i < self.dataLength; i++) {
+					self.neighborhoodsData()[i].visible(false);
+				}
+				self.clearMarkers();
+				// set search result items to true/visible
+				for (var i = 0; i < length; i++) {
+					indexValue = (self.searchResults()[i] - 1);
+					self.neighborhoodsData()[indexValue].visible(true)
+					self.reactivateMarkers(indexValue);
+				}
+			}
+			// else return all items if user enters no string and clicks search/presses enter
+			else {
+				// set all markers to visible, reset list item styling
+				for (var i = 0; i < self.dataLength; i++) {
+					self.neighborhoodsData()[i].visible(true);
+					self.reactivateMarkers(i);
+					self.resetAllItemStyles();
+				}
+			}
 		}
 	}
 
