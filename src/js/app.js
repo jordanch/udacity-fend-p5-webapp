@@ -264,12 +264,14 @@ function init() {
 		self.searchButtonClick = function() {
 			self.searchFunc();
 			self.setVisible();
+			self.currentDropSearchValue('');
 		}
 
 		// function to execute drop-down/category search
 		self.searchButtonClick2 = function() {
 			self.searchFunc2();
 			self.setVisible();
+			self.currentSearchValue('')
 		}
 
 		// function which uses the array of searchResults which contains index values to set objects to visible
