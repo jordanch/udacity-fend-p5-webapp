@@ -71,7 +71,6 @@ function init() {
 		// for loop required to push each object into array sequentially
 		/*
 			1. TO DO: refactor for loop into forEach method
-			2. Change error handling to notify user about failure
 		*/
 
 		$.getJSON("js/data/data.json", function(data){
