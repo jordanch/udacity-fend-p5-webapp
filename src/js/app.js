@@ -1,26 +1,6 @@
-// refactor code so that var length = self.neighborhoodsData().length; is global
+// google maps API key: AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM
 
-// implement functionality so that when object is visible, both the list item and the marker is visible.
-// implement functionality so that search results are ordered in terms of relativity to search
-
-/*	google maps API key: AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM
-	google maps API implementation
-	------------------------------------------------------------
-*/
-// // jQuery function to get JSON via AJAX call using JSON-P
-// var neighborhoods = $.ajax("http://www.jordancolehunt.co.za/data_udacity_app/data.json", {
-// 	dataType: "jsonp",
-// 	jsonp: "callback",
-// 	jsonpCallback: "jsonCallback",
-// 	type: "GET"
-// 	});
-// function jsonCallback(data) {
-// 	console.log(data);
-// }
-
-// global scope
-//var updateMessage;
-//var test;
+var loadingMessageInGlobal = '';
 
 function init() {
 
@@ -63,16 +43,11 @@ function init() {
 		self.searchResults = ko.observable([]);
 		self.mapIsLoading = ko.observable(true);
 		self.loadingMessage = ko.observable('PLEASE WAIT FOR MAP TO LOAD');
-		//test = self.loadingMessage();
 
 		// function to update currentDropSearchValue
 		self.updateDropSearchValue = function(data) {
 			//self.currentDropSearchValue('')
 			console.log(data);
-		}
-		// update loading message if google maps fails
-		updateMessage = function() {
-			self.loadingMessage('COULD NOT LOAD GOOGLE MAPS, PLEASE TRY AGAIN');
 		}
 
 		// constructor for location object
@@ -139,7 +114,6 @@ function init() {
 					// when marker is clicked, update isSelcted value to true
 					self.neighborhoodsData()[index].isSelected(true);
 					// set infowindow links
-
 				});
 			}, timeout);
 		}
@@ -287,19 +261,16 @@ function init() {
 			self.searchResults(f.search(self.currentDropSearchValue()));
 		}
 
-
 		// function to execute text input search
 		self.searchButtonClick = function() {
 			self.searchFunc();
 			self.setVisible();
-			//self.clearSearch();
 		}
 
 		// function to execute drop-down/category search
 		self.searchButtonClick2 = function() {
 			self.searchFunc2();
 			self.setVisible();
-			//self.clearSearch();
 		}
 
 		// function which uses the array of searchResults which contains index values to set objects to visible
@@ -340,6 +311,5 @@ function init() {
 			self.mapIsLoading(false);
 		});
 	}
-
 	ko.applyBindings(new myAppModelView(map));
 };

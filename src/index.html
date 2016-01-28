@@ -1,24 +1,11 @@
-
-
-
 <!--
 Credit to the following:
 
 * jQuery for jQuery library
 * Google for Google Maps API
 * Kiro Risk for Fuse.js
-* leanModal.js -- http://leanmodal.finelysliced.com.au/#
+-->
 
-Checklist:
-
-[x] Async javascript load for google map APIs
-[ ] Error handling for google maps API
-[ ] JSON file for neighborhood areas on jordancolehunt.co.za domain
-[ ] Minify files in prod folder; prod files in prod folder
-[x] Structure code in MVVM pattern
-[ ] Change drop function ot execute on load/window ready/goole map load
-
- -->
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -26,19 +13,18 @@ Checklist:
 		<title>Do Durban - activity finder</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="css/style.css">
-		<script src="js/lib/knockout-3.4.0.js"></script> <!-- TO DO: Minify this -->
+		<script src="js/lib/knockout-3.4.0.js"></script>
 		<script src="js/lib/jquery-2.2.0.min.js"></script>
 		<script src="js/lib/fuse.min.js"></script>
 		<script async defer>
 			var url = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM&callback=init";
 			//defer attr ensures html parsing is not interuppted; js execution will occur after html parsing
 			$.getScript(url)
-			//, function(data, textStatus, jqxhr){})
 				.done(function(){
 					console.log('Google Maps load successful');
 				}).fail(function(){
 					console.log('Google Maps load faulty');
-					//updateMessage();
+					$('#wait').text('ERROR LOADING GOOGLE MAP');
 				});
 		</script>
 		<script defer src="js/app.js"></script>
