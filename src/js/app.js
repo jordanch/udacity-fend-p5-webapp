@@ -51,7 +51,7 @@ function init() {
 		}
 
 		// constructor for location object
-		function NeighborhoodSpot(lat, lng, name, content, address, filter, id) {
+		function NeighborhoodSpot(lat, lng, name, content, address, filter, yelp, id) {
 			this.lat = lat;
 			this.lng = lng;
 			this.spotName = name;
@@ -65,7 +65,8 @@ function init() {
 			this.ID = id;
 			this.marker = null;
 			this.filter = filter;
-			this.review;
+			this.yelpResponseObject;
+			this.yelpID = yelp;
 		}
 
 		// jQuery function to get JSON and parse it into JS Object literal
@@ -74,14 +75,51 @@ function init() {
 			1. TO DO: refactor for loop into forEach method
 		*/
 
+		// Yelp API credentials
+		var oauth = OAuth({
+		    consumer: {
+		        public: 'ZSWgaZYLwKhhrocKY13fZQ',
+		        secret: '_ZVFtUS_l4C41EvkvwwsU3IssS8'
+		    },
+		    signature_method: 'HMAC-SHA1'
+		});
+
+		var request_data = {
+		    url: 'https://api.yelp.com/v2/business/',
+		    method: 'GET',
+		    data: {
+		        status: 'Hi'
+		    }
+		};
+
+		var token = {
+		    public: 'ODXwdCC3Nrpa9RPoutYaFESTWB9s29Xi',
+		    secret: '7pdGACoAD6RQJHzNdlZJvAhj3Fg'
+		};
+
+		var dataAvail;
+
 		$.getJSON("js/data/data.json", function(data){
+			dataAvail = data;
 			var length = data.neighborhoods.length;
 			for (var i = 0; i < length; i++){
-				self.neighborhoodsData.push(new NeighborhoodSpot(data.neighborhoods[i].lat, data.neighborhoods[i].lng, data.neighborhoods[i].name, data.neighborhoods[i].content, data.neighborhoods[i].address, data.neighborhoods[i].filter, i + 1));
+				self.neighborhoodsData.push(new NeighborhoodSpot(data.neighborhoods[i].lat, data.neighborhoods[i].lng, data.neighborhoods[i].name, data.neighborhoods[i].content, data.neighborhoods[i].address, data.neighborhoods[i].filter, data.neighborhoods[i].yelpid, i + 1));
 				console.log('------data check------ \n' + self.neighborhoodsData()[i].ID + '\n----------------------');
 			}
 			self.dataLength = self.neighborhoodsData().length;
 			console.log('succeeded in loading neighborhood data');
+		}).done(function(){
+			// Yelp AJAX call
+			var length = dataAvail.neighborhoods.length;
+			for (var i = 0; i < length; i++){
+				$.ajax({
+					url: request_data.url + dataAvail.neighborhoods[i].yelpid,
+					type: request_data.method,
+					data: oauth.authorize(request_data, token)
+				}).done(function(){
+					console.log(data)
+				})
+			}
 		}).fail(function() {
 			console.log('failed to load neighborhood data');
 		});
