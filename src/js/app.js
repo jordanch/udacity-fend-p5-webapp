@@ -75,7 +75,7 @@ function init() {
 			1. TO DO: refactor for loop into forEach method
 		*/
 
-		// Yelp API credentials
+		// Setting up OAuth parameters for Yelp API
 		var oauth = OAuth({
 		    consumer: {
 		        public: 'ZSWgaZYLwKhhrocKY13fZQ',
@@ -97,10 +97,10 @@ function init() {
 		    secret: '7pdGACoAD6RQJHzNdlZJvAhj3Fg'
 		};
 
-		var dataAvail;
+		//var dataAvail;
 
 		$.getJSON("js/data/data.json", function(data){
-			dataAvail = data;
+			//dataAvail = data;
 			var length = data.neighborhoods.length;
 			for (var i = 0; i < length; i++){
 				self.neighborhoodsData.push(new NeighborhoodSpot(data.neighborhoods[i].lat, data.neighborhoods[i].lng, data.neighborhoods[i].name, data.neighborhoods[i].content, data.neighborhoods[i].address, data.neighborhoods[i].filter, data.neighborhoods[i].yelpid, i + 1));
@@ -108,16 +108,17 @@ function init() {
 			}
 			self.dataLength = self.neighborhoodsData().length;
 			console.log('succeeded in loading neighborhood data');
-		}).done(function(){
+		}).done(function(data){
 			// Yelp AJAX call
-			var length = dataAvail.neighborhoods.length;
+			console.log(data);
+			var length = data.neighborhoods.length;
 			for (var i = 0; i < length; i++){
 				$.ajax({
-					url: request_data.url + dataAvail.neighborhoods[i].yelpid,
+					url: request_data.url + data.neighborhoods[i].yelpid,
 					type: request_data.method,
 					data: oauth.authorize(request_data, token)
-				}).done(function(){
-					console.log(data)
+				}).done(function(data){
+					console.log('done:' + data)
 				})
 			}
 		}).fail(function() {
