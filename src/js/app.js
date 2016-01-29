@@ -9,10 +9,10 @@ function init() {
 	// function to initialise google map
 	function initMap() {
 		// initialise map with coords and zoom level
-		var durban = new google.maps.LatLng(-29.728146, 31.083943);
+		var SF = new google.maps.LatLng(37.775897, -122.442238);
 		map = new google.maps.Map(document.getElementById('map'), {
-			center: durban,
-			zoom: 10
+			center: SF,
+			zoom: 12
 		});
 
 		var windowHeight = window.innerHeight;
@@ -28,7 +28,7 @@ function init() {
 		var self = this;
 		self.infowindow = ko.observableArray([]);
 		self.neighborhoodsData = ko.observableArray([]);
-		self.searchCategories = ko.observableArray(['','Food', 'Club', 'Drinks']);
+		self.searchCategories = ko.observableArray(['','Food', 'Coffee', 'Drinks']);
 		self.mapData = map;
 		self.searchOptions = {
 			keys: ['spotName'],
@@ -65,6 +65,7 @@ function init() {
 			this.ID = id;
 			this.marker = null;
 			this.filter = filter;
+			this.review;
 		}
 
 		// jQuery function to get JSON and parse it into JS Object literal

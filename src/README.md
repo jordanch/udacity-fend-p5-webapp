@@ -20,3 +20,4 @@ If you want to read up on the spot, check its address or look at its Google Stre
 -- Thanks to jQuery for the library
 -- Thanks to Kiro Risk for Fuse.js
 -- Thanks to KnockOut.js creators for the MVVM framework/library
+-- Thanks to ddo for the easy OAuth library - https://github.com/ddo/oauth-1.0a
