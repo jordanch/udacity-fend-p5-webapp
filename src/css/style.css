@@ -55,6 +55,11 @@ html, body {
 		max-width: 148px;
 	}
 
+.window_size {
+	height: 600px; /* fallback for Opera Mini and old browsers */
+	height: 100vh; /* 100 percent of viewport height */
+}
+
 @media screen and (max-width: 640px) {
 	.col-2-12 {
 		width: 40%;

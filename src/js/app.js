@@ -15,9 +15,6 @@ function init() {
 			center: SF,
 			zoom: 12
 		});
-
-		var windowHeight = window.innerHeight;
-		$('.window_size').css('height', windowHeight);
 	}
 
 	// initialise google map
@@ -38,7 +35,7 @@ function init() {
 		self.searchOptions2 = { // this is used for filter/category search results
 			keys: ['filter'],
 			id: 'ID'
-		}
+		};
 		self.currentSearchValue = ko.observable('');
 		self.currentDropSearchValue = ko.observable(''); // initially nothing is selected
 		self.searchResults = ko.observable([]);
@@ -49,7 +46,7 @@ function init() {
 		self.updateDropSearchValue = function(data) {
 			//self.currentDropSearchValue('')
 			console.log(data);
-		}
+		};
 
 		// constructor for location object
 		function NeighborhoodSpot(lat, lng, name, contentData, address, filter, id) {
@@ -71,7 +68,7 @@ function init() {
 			this.marker = null;
 			this.filter = filter;
 			this.flickrResponseObject;
-			
+
 		}
 
 		// jQuery function to get JSON and parse it into JS Object literal
@@ -114,19 +111,19 @@ function init() {
 							var jqxhr = $.ajax({
 								url: url,
 								dataType: "json"
-							}).done(function(data){ 
+							}).done(function(data){
 								self.neighborhoodsData()[index].flickrResponseObject = data;
 								// flickr image url
 								var obj =  self.neighborhoodsData()[index];
-								obj.flickrURL = 'https://farm'+ obj.flickrResponseObject.photos.photo[0].farm + 
-								'.staticflickr.com/' + 
+								obj.flickrURL = 'https://farm'+ obj.flickrResponseObject.photos.photo[0].farm +
+								'.staticflickr.com/' +
 								obj.flickrResponseObject.photos.photo[0].server + '/' +
 								obj.flickrResponseObject.photos.photo[0].id + '_' + obj.flickrResponseObject.photos.photo[0].secret +
 								'.jpg';
-								obj.flickTag = '<br><a target="_blank" href="' + obj.flickrURL + '">Click this to see Flickr image relating to ' + obj.spotName + '</a>'
+								obj.flickTag = '<br><a target="_blank" href="' + obj.flickrURL + '">Click this to see Flickr image relating to ' + obj.spotName + '</a>';
 								obj.infowindow.setContent(obj.contentData + obj.additionalContent + obj.flickTag);
 							}).fail(function(){
-								console.log('error fetching flickr data')
+								console.log('error fetching flickr data');
 							});
 
 					// when marker is selected, animate with bounce
@@ -140,7 +137,7 @@ function init() {
 					// set infowindow links
 				});
 			}, timeout);
-		}
+		};
 
 		// function to unselect markers
 		self.switchSelectedMarkers = function() {
@@ -149,7 +146,7 @@ function init() {
 					self.neighborhoodsData()[i].isSelected(false);
 				}
 			}
-		}
+		};
 
 		// function to clear markers
 		self.clearMarkers = function() {
@@ -158,16 +155,16 @@ function init() {
 			// loop over array
 			for (var i = 0; i < length; i++) {
 				// check to see if markers exist
-				if (self.neighborhoodsData()[i].marker != null){
+				if (self.neighborhoodsData()[i].marker !== null){
 					// if they do, set marker's map property to null
 					self.neighborhoodsData()[i].marker.setMap(null);
 				}
 			}
-		}
+		};
 
 		self.reactivateMarkers = function(i) {
 			self.neighborhoodsData()[i].marker.setMap(self.mapData);
-		}
+		};
 
 		// function to init markers and list items
 		self.init = function() {
@@ -178,13 +175,13 @@ function init() {
 				// create infowindow objects for each marker as property on NeighborhoodSpot object in observ array
 				var infowin = new google.maps.InfoWindow({
 					content: self.neighborhoodsData()[i].content
-				})
+				});
 				// extend NeighborhoodSpot object with property for infowindow object
 				self.neighborhoodsData()[i].infowindow = infowin;
 				// the following function creates markers with initial delay (timeout to execution), passing in 1) NeighborhoodSpot object 2) delay algorithm 3) index
 				self.addMarkerWithTimeout(self.neighborhoodsData()[i], i * 200, i);
 			}
-		}
+		};
 
 		self.clickListItem = function(that) {
 			if (!that.isSelected()) {
@@ -195,12 +192,12 @@ function init() {
 			that.infowindow.open(self.mapData, that.marker);
 			self.animateBounce(that);
 			self.styleItem(that);
-		}
+		};
 
 		// function to change marker's animation when selected
 		self.animateBounce = function(that) {
 			// check to see if function has object parameter
-			if (that instanceof NeighborhoodSpot == true) {
+			if (that instanceof NeighborhoodSpot === true) {
 				// assign self2 to passed-in NeighborhoodSpot object
 				var self2 = that;
 				// if the marker clicked on is animating, exit function
@@ -212,7 +209,7 @@ function init() {
 				// exit function
 				return;
 			}
-		}
+		};
 
 		// function to remove marker animations
 		self.removeAnimations = function() {
@@ -222,7 +219,7 @@ function init() {
 			for (var i = 0; i < length; i++) {
 				obj[i].marker.setAnimation(null);
 			}
-		}
+		};
 
 		// close all info windows
 		self.closeInfoWindows = function() {
@@ -232,7 +229,7 @@ function init() {
 			for (var i = 0; i < length; i++) {
 				obj[i].infowindow.close();
 			}
-		}
+		};
 
 		// apply style to selected list item
 		self.styleItem = function(that) {
@@ -252,7 +249,7 @@ function init() {
 				}
 				node.css("background-color", "red");
 			}
-		}
+		};
 
 		self.resetAllItemStyles = function() {
 			var node;
@@ -260,14 +257,14 @@ function init() {
 				node = $('#' + i);
 				node.css("background-color", 'inherit');
 			}
-		}
+		};
 
 		// function to clear current search results
 		self.clearSearch = function() {
 			self.currentDropSearchValue('');
 			self.currentSearchValue('');
 			self.searchButtonClick();
-		}
+		};
 
 		// search functionality --- http://kiro.me/projects/fuse.html
 		// text input search functionality
@@ -275,27 +272,27 @@ function init() {
 		self.searchFunc = function() { // this library freaks out when an object's ID is 0, so all IDs are index + 1
 			var f = new Fuse(self.neighborhoodsData(), self.searchOptions);
 			self.searchResults(f.search(self.currentSearchValue()));
-		}
+		};
 
 		// drop-down search functionality
 		self.searchFunc2 = function() {
 			var f = new Fuse(self.neighborhoodsData(), self.searchOptions2);
 			self.searchResults(f.search(self.currentDropSearchValue()));
-		}
+		};
 
 		// function to execute text input search
 		self.searchButtonClick = function() {
 			self.searchFunc();
 			self.setVisible();
 			self.currentDropSearchValue('');
-		}
+		};
 
 		// function to execute drop-down/category search
 		self.searchButtonClick2 = function() {
 			self.searchFunc2();
 			self.setVisible();
-			self.currentSearchValue('')
-		}
+			self.currentSearchValue('');
+		};
 
 		// function which uses the array of searchResults which contains index values to set objects to visible
 		self.setVisible = function() {
@@ -311,9 +308,9 @@ function init() {
 				self.resetAllItemStyles();
 				self.clearMarkers();
 				// set search result items to true/visible
-				for (var i = 0; i < length; i++) {
-					indexValue = (self.searchResults()[i] - 1);
-					self.neighborhoodsData()[indexValue].visible(true)
+				for (var x = 0; x < length; x++) {
+					indexValue = (self.searchResults()[x] - 1);
+					self.neighborhoodsData()[indexValue].visible(true);
 					self.reactivateMarkers(indexValue);
 				}
 			}
@@ -322,13 +319,13 @@ function init() {
 				self.closeInfoWindows();
 				self.resetAllItemStyles();
 				// set all markers to visible, reset list item styling
-				for (var i = 0; i < self.dataLength; i++) {
-					self.neighborhoodsData()[i].visible(true);
-					self.reactivateMarkers(i);
+				for (var o = 0; o < self.dataLength; o++) {
+					self.neighborhoodsData()[o].visible(true);
+					self.reactivateMarkers(o);
 					self.resetAllItemStyles();
 				}
 			}
-		}
+		};
 
 		$(window).load(function(){
 			self.init();
@@ -336,4 +333,4 @@ function init() {
 		});
 	}
 	ko.applyBindings(new myAppModelView(map));
-};
+}
