@@ -1,4 +1,5 @@
 // google maps API key: AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM
+// Flickr API key 270d3453be92cea8224422aa6ea6f882
 
 var loadingMessageInGlobal = '';
 
@@ -51,22 +52,26 @@ function init() {
 		}
 
 		// constructor for location object
-		function NeighborhoodSpot(lat, lng, name, content, address, filter, yelp, id) {
+		function NeighborhoodSpot(lat, lng, name, contentData, address, filter, id) {
 			this.lat = lat;
 			this.lng = lng;
 			this.spotName = name;
-			this.content = content + '<br><br>' + address + '<br><br>' +
+			this.flickrURL;
+			this.flickTag;
+			this.additionalContent = '<br><br>' + address + '<br><br>' +
 				'<a href="https://maps.googleapis.com/maps/api/streetview?size=300x300&location=' +
 				this.lat + ',' + this.lng + '&fov=90&heading=235&pitch=10&key=AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM" target="_blank">' +
-				'Picture of ' + this.spotName + '</a>';
+				'Click here to see a Street View of ' + this.spotName + '</a>';
+			this.contentData = contentData;
+			this.content = this.contentData + this.additionalContent;
 			this.address = address;
 			this.visible = ko.observable(true); // starts off visible
 			this.isSelected = ko.observable(false); // starts off not selected
 			this.ID = id;
 			this.marker = null;
 			this.filter = filter;
-			this.yelpResponseObject;
-			this.yelpID = yelp;
+			this.flickrResponseObject;
+			
 		}
 
 		// jQuery function to get JSON and parse it into JS Object literal
@@ -75,57 +80,15 @@ function init() {
 			1. TO DO: refactor for loop into forEach method
 		*/
 
-		// Setting up OAuth parameters for Yelp API
-		var oauth = OAuth({
-		    consumer: {
-		        public: 'ZSWgaZYLwKhhrocKY13fZQ',
-		        secret: '_ZVFtUS_l4C41EvkvwwsU3IssS8'
-		    },
-		    signature_method: 'HMAC-SHA1'
-		});
-
-		var request_data = {
-		    url: 'https://api.yelp.com/v2/business/',
-		    method: 'GET',
-		    data: {
-		        status: 'Hi'
-		    }
-		};
-
-		var token = {
-		    public: 'ODXwdCC3Nrpa9RPoutYaFESTWB9s29Xi',
-		    secret: '7pdGACoAD6RQJHzNdlZJvAhj3Fg'
-		};
-
-		//var dataAvail;
-
 		$.getJSON("js/data/data.json", function(data){
-			//dataAvail = data;
 			var length = data.neighborhoods.length;
 			for (var i = 0; i < length; i++){
-				self.neighborhoodsData.push(new NeighborhoodSpot(data.neighborhoods[i].lat, data.neighborhoods[i].lng, data.neighborhoods[i].name, data.neighborhoods[i].content, data.neighborhoods[i].address, data.neighborhoods[i].filter, data.neighborhoods[i].yelpid, i + 1));
+				self.neighborhoodsData.push(new NeighborhoodSpot(data.neighborhoods[i].lat, data.neighborhoods[i].lng, data.neighborhoods[i].name, data.neighborhoods[i].content, data.neighborhoods[i].address, data.neighborhoods[i].filter, i + 1));
 				console.log('------data check------ \n' + self.neighborhoodsData()[i].ID + '\n----------------------');
 			}
 			self.dataLength = self.neighborhoodsData().length;
 			console.log('succeeded in loading neighborhood data');
-		}).done(function(data){
-			// Yelp AJAX call
-			console.log(data);
-			var length = data.neighborhoods.length;
-			for (var i = 0; i < length; i++){
-				$.ajax({
-					url: request_data.url + data.neighborhoods[i].yelpid,
-					type: request_data.method,
-					data: oauth.authorize(request_data, token)
-				}).done(function(data){
-					console.log('done:' + data)
-				})
-			}
-		}).fail(function() {
-			console.log('failed to load neighborhood data');
 		});
-
-
 
 		// implement simple marker with timeout
 		self.addMarkerWithTimeout = function (NeighborhoodSpotObject, timeout, index) { // NeighborhoodSpotObject expects self.neighborhoodsData()[i]
@@ -144,6 +107,28 @@ function init() {
 					// when marker is clicked, close all other infowindows and open specific infowindow
 					self.closeInfoWindows();
 					self.neighborhoodsData()[index].infowindow.open(self.mapData, self.neighborhoodsData()[index].marker);
+
+						var length = self.neighborhoodsData().length;
+							var url = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=270d3453be92cea8224422aa6ea6f882&format=json&nojsoncallback=1&sort=relevance&per_page=1&tags=' + self.neighborhoodsData()[index].spotName;
+							var jqXHRresponse;
+							var jqxhr = $.ajax({
+								url: url,
+								dataType: "json"
+							}).done(function(data){ 
+								self.neighborhoodsData()[index].flickrResponseObject = data;
+								// flickr image url
+								var obj =  self.neighborhoodsData()[index];
+								obj.flickrURL = 'https://farm'+ obj.flickrResponseObject.photos.photo[0].farm + 
+								'.staticflickr.com/' + 
+								obj.flickrResponseObject.photos.photo[0].server + '/' +
+								obj.flickrResponseObject.photos.photo[0].id + '_' + obj.flickrResponseObject.photos.photo[0].secret +
+								'.jpg';
+								obj.flickTag = '<br><a target="_blank" href="' + obj.flickrURL + '">Click this to see Flickr image relating to ' + obj.spotName + '</a>'
+								obj.infowindow.setContent(obj.contentData + obj.additionalContent + obj.flickTag);
+							}).fail(function(){
+								console.log('error fetching flickr data')
+							});
+
 					// when marker is selected, animate with bounce
 					self.animateBounce(NeighborhoodSpotObject);
 					// when marker is clicked, corresponding list item must highlight
@@ -202,7 +187,6 @@ function init() {
 		}
 
 		self.clickListItem = function(that) {
-			console.log(that.isSelected());
 			if (!that.isSelected()) {
 				self.closeInfoWindows();
 				self.switchSelectedMarkers();
@@ -254,7 +238,6 @@ function init() {
 		self.styleItem = function(that) {
 			var index = self.neighborhoodsData.indexOf(that);
 			var node = $('#' + index);
-			console.log(node.css('backgroundColor'));
 			// if list item is already red/selected, exit function
 			if (node.css('backgroundColor') === 'rgb(255, 0, 0)') {
 				return;
