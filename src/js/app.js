@@ -53,8 +53,8 @@ function init() {
 			this.lat = lat;
 			this.lng = lng;
 			this.spotName = name;
-			this.flickrURL;
-			this.flickTag;
+			this.flickrURL = '';
+			this.flickTag = '';
 			this.additionalContent = '<br><br>' + address + '<br><br>' +
 				'<a href="https://maps.googleapis.com/maps/api/streetview?size=300x300&location=' +
 				this.lat + ',' + this.lng + '&fov=90&heading=235&pitch=10&key=AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM" target="_blank">' +
@@ -67,7 +67,7 @@ function init() {
 			this.ID = id;
 			this.marker = null;
 			this.filter = filter;
-			this.flickrResponseObject;
+			this.flickrResponseObject = null;
 
 		}
 
