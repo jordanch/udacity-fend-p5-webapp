@@ -87,6 +87,38 @@ function init() {
 			console.log('succeeded in loading neighborhood data');
 		});
 
+		// marker click event handler
+		self.markerClick = function(that) {
+			// when marker is clicked, close all other infowindows and open specific infowindow
+			var index = self.neighborhoodsData.indexOf(that);
+			self.closeInfoWindows();
+			self.neighborhoodsData()[index].infowindow.open(self.mapData, self.neighborhoodsData()[index].marker);
+			var length = self.neighborhoodsData().length;
+			var url = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=270d3453be92cea8224422aa6ea6f882&format=json&nojsoncallback=1&sort=relevance&per_page=1&tags=' + self.neighborhoodsData()[index].spotName;
+			var jqXHRresponse;
+			var jqxhr = $.ajax({
+				url: url,
+				dataType: "json"
+			}).done(function(data){
+				self.neighborhoodsData()[index].flickrResponseObject = data;
+				// flickr image url
+				var obj =  self.neighborhoodsData()[index];
+				obj.flickrURL = 'https://farm'+ obj.flickrResponseObject.photos.photo[0].farm +
+				'.staticflickr.com/' +
+				obj.flickrResponseObject.photos.photo[0].server + '/' +
+				obj.flickrResponseObject.photos.photo[0].id + '_' + obj.flickrResponseObject.photos.photo[0].secret +
+				'.jpg';
+				obj.flickTag = '<br><a target="_blank" href="' + obj.flickrURL + '">Click this to see Flickr image relating to ' + obj.spotName + '</a>';
+				obj.infowindow.setContent(obj.contentData + obj.additionalContent + obj.flickTag);
+			}).fail(function(){
+				console.log('error fetching flickr data');
+				// infowindow fail message
+				var obj =  self.neighborhoodsData()[index];
+				obj.flickTag = '<br>Could not load Flickr picture. Please try click Neighborhood spot again';
+				obj.infowindow.setContent(obj.contentData + obj.additionalContent + obj.flickTag);
+			});
+		};
+
 		// implement simple marker with timeout
 		self.addMarkerWithTimeout = function (NeighborhoodSpotObject, timeout, index) { // NeighborhoodSpotObject expects self.neighborhoodsData()[i]
 			window.setTimeout(function() {
@@ -98,34 +130,11 @@ function init() {
 					animation: google.maps.Animation.DROP
 				}));
 				// extend NeighborhoodSpot object with marker property
-				self.neighborhoodsData()[index].marker = marker();
+				NeighborhoodSpotObject.marker = marker();
 				// create click listeners for each marker based on index
-				self.neighborhoodsData()[index].marker.addListener('click', function(){
-					// when marker is clicked, close all other infowindows and open specific infowindow
-					self.closeInfoWindows();
-					self.neighborhoodsData()[index].infowindow.open(self.mapData, self.neighborhoodsData()[index].marker);
-
-						var length = self.neighborhoodsData().length;
-							var url = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=270d3453be92cea8224422aa6ea6f882&format=json&nojsoncallback=1&sort=relevance&per_page=1&tags=' + self.neighborhoodsData()[index].spotName;
-							var jqXHRresponse;
-							var jqxhr = $.ajax({
-								url: url,
-								dataType: "json"
-							}).done(function(data){
-								self.neighborhoodsData()[index].flickrResponseObject = data;
-								// flickr image url
-								var obj =  self.neighborhoodsData()[index];
-								obj.flickrURL = 'https://farm'+ obj.flickrResponseObject.photos.photo[0].farm +
-								'.staticflickr.com/' +
-								obj.flickrResponseObject.photos.photo[0].server + '/' +
-								obj.flickrResponseObject.photos.photo[0].id + '_' + obj.flickrResponseObject.photos.photo[0].secret +
-								'.jpg';
-								obj.flickTag = '<br><a target="_blank" href="' + obj.flickrURL + '">Click this to see Flickr image relating to ' + obj.spotName + '</a>';
-								obj.infowindow.setContent(obj.contentData + obj.additionalContent + obj.flickTag);
-							}).fail(function(){
-								console.log('error fetching flickr data');
-							});
-
+				NeighborhoodSpotObject.marker.addListener('click', function(){
+					// marker click handler
+					self.markerClick(NeighborhoodSpotObject);
 					// when marker is selected, animate with bounce
 					self.animateBounce(NeighborhoodSpotObject);
 					// when marker is clicked, corresponding list item must highlight
@@ -189,7 +198,7 @@ function init() {
 				self.switchSelectedMarkers();
 			}
 			that.isSelected(true);
-			that.infowindow.open(self.mapData, that.marker);
+			self.markerClick(that);
 			self.animateBounce(that);
 			self.styleItem(that);
 		};
