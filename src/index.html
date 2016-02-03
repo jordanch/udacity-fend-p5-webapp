@@ -55,7 +55,7 @@ Credit to the following:
 				</div>
 				<!-- menu sub view: list items -->
 				<div id='list_items' data-bind='foreach: neighborhoodsData'>
-					<div class='list_spot_item' data-bind='text: spotName, click: $parent.clickListItem, attr: {id: $index}, visible: visible'></div>
+					<div class='list_spot_item' data-bind='text: spotName, click: $parent.clickListItem, attr: {id: $index}, visible: visible, css: { is_selected: isSelected() == true}'></div>
 				</div>
 			</div>
 			<div class='col-10-12 window_size'>

@@ -60,6 +60,10 @@ html, body {
 	height: 100vh; /* 100 percent of viewport height */
 }
 
+.is_selected {
+	background-color: red;
+}
+
 @media screen and (max-width: 640px) {
 	.col-2-12 {
 		width: 40%;

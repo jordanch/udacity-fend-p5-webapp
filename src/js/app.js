@@ -44,7 +44,6 @@ function init() {
 
 		// function to update currentDropSearchValue
 		self.updateDropSearchValue = function(data) {
-			//self.currentDropSearchValue('')
 			console.log(data);
 		};
 
@@ -138,7 +137,7 @@ function init() {
 					// when marker is selected, animate with bounce
 					self.animateBounce(NeighborhoodSpotObject);
 					// when marker is clicked, corresponding list item must highlight
-					self.styleItem(NeighborhoodSpotObject);
+					//self.styleItem(NeighborhoodSpotObject);
 					// when marker is clicked, unselect other markers before marking current as true
 					self.switchSelectedMarkers();
 					// when marker is clicked, update isSelcted value to true
@@ -200,7 +199,6 @@ function init() {
 			that.isSelected(true);
 			self.markerClick(that);
 			self.animateBounce(that);
-			self.styleItem(that);
 		};
 
 		// function to change marker's animation when selected
@@ -240,39 +238,16 @@ function init() {
 			}
 		};
 
-		// apply style to selected list item
-		self.styleItem = function(that) {
-			var index = self.neighborhoodsData.indexOf(that);
-			var node = $('#' + index);
-			// if list item is already red/selected, exit function
-			if (node.css('backgroundColor') === 'rgb(255, 0, 0)') {
-				return;
-			}
-			// else, if it isn't red, clear all other background colors and make current selection red
-			else {
-				// loop over items
-				var node2;
-				for (var i = 0; i < self.dataLength; i++) {
-					node2 = $('#' + i);
-					node2.css("background-color", 'inherit');
-				}
-				node.css("background-color", "red");
-			}
-		};
-
-		self.resetAllItemStyles = function() {
-			var node;
-			for (var i = 0; i < self.dataLength; i++) {
-				node = $('#' + i);
-				node.css("background-color", 'inherit');
-			}
-		};
-
 		// function to clear current search results
 		self.clearSearch = function() {
 			self.currentDropSearchValue('');
 			self.currentSearchValue('');
 			self.searchButtonClick();
+			// set all items/markers to DESELECTED
+			var length = self.neighborhoodsData().length;
+			for (var i = 0; i < length; i++){
+				self.neighborhoodsData()[i].isSelected(false);
+			}
 		};
 
 		// search functionality --- http://kiro.me/projects/fuse.html
@@ -314,7 +289,6 @@ function init() {
 				for (var i = 0; i < self.dataLength; i++) {
 					self.neighborhoodsData()[i].visible(false);
 				}
-				self.resetAllItemStyles();
 				self.clearMarkers();
 				// set search result items to true/visible
 				for (var x = 0; x < length; x++) {
@@ -326,12 +300,10 @@ function init() {
 			// else return all items if user enters no string and clicks search/presses enter
 			else {
 				self.closeInfoWindows();
-				self.resetAllItemStyles();
 				// set all markers to visible, reset list item styling
 				for (var o = 0; o < self.dataLength; o++) {
 					self.neighborhoodsData()[o].visible(true);
 					self.reactivateMarkers(o);
-					self.resetAllItemStyles();
 				}
 			}
 		};
