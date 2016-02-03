@@ -16,16 +16,12 @@ Credit to the following:
 		<script src="js/lib/knockout-3.4.0.js"></script>
 		<script src="js/lib/jquery-2.2.0.min.js"></script>
 		<script src="js/lib/fuse.min.js"></script>
-		<script async defer>
-			var url = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM&callback=init";
-			//defer attr ensures html parsing is not interuppted; js execution will occur after html parsing
-			$.getScript(url)
-				.done(function(){
-					console.log('Google Maps load successful');
-				}).fail(function(){
-					console.log('Google Maps load faulty');
-					$('#wait').text('ERROR LOADING GOOGLE MAP');
-				});
+		<script src="js/error_handling.js"></script>
+		<script
+				async
+				defer
+				src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM&callback=init"
+				onerror="googleError()">
 		</script>
 		<script defer src="js/app.js"></script>
 	</head>
@@ -67,5 +63,6 @@ Credit to the following:
 				<div id='map'></div>
 				<div id='wait' data-bind='visible: mapIsLoading, text: loadingMessage'></div>
 			</div>
+		</div>
 	</body>
 </html>
