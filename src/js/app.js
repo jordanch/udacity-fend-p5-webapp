@@ -1,7 +1,7 @@
+"use strict";
+
 // google maps API key: AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM
 // Flickr API key 270d3453be92cea8224422aa6ea6f882
-
-var loadingMessageInGlobal = '';
 
 function init() {
 
@@ -42,11 +42,6 @@ function init() {
 		self.mapIsLoading = ko.observable(true);
 		self.loadingMessage = ko.observable('PLEASE WAIT FOR MAP TO LOAD');
 
-		// function to update currentDropSearchValue
-		self.updateDropSearchValue = function(data) {
-			console.log(data);
-		};
-
 		// constructor for location object
 		function NeighborhoodSpot(lat, lng, name, contentData, address, filter, id) {
 			this.lat = lat;
@@ -80,10 +75,8 @@ function init() {
 			var length = data.neighborhoods.length;
 			for (var i = 0; i < length; i++){
 				self.neighborhoodsData.push(new NeighborhoodSpot(data.neighborhoods[i].lat, data.neighborhoods[i].lng, data.neighborhoods[i].name, data.neighborhoods[i].content, data.neighborhoods[i].address, data.neighborhoods[i].filter, i + 1));
-				console.log('------data check------ \n' + self.neighborhoodsData()[i].ID + '\n----------------------');
 			}
 			self.dataLength = self.neighborhoodsData().length;
-			console.log('succeeded in loading neighborhood data');
 		});
 
 		// marker click event handler
@@ -92,9 +85,7 @@ function init() {
 			var index = self.neighborhoodsData.indexOf(that);
 			self.closeInfoWindows();
 			self.neighborhoodsData()[index].infowindow.open(self.mapData, self.neighborhoodsData()[index].marker);
-			var length = self.neighborhoodsData().length;
 			var url = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=270d3453be92cea8224422aa6ea6f882&format=json&nojsoncallback=1&sort=relevance&per_page=1&tags=' + self.neighborhoodsData()[index].spotName;
-			var jqXHRresponse;
 			var jqxhr = $.ajax({
 				url: url,
 				dataType: "json"
@@ -102,15 +93,20 @@ function init() {
 				self.neighborhoodsData()[index].flickrResponseObject = data;
 				// flickr image url
 				var obj =  self.neighborhoodsData()[index];
-				obj.flickrURL = 'https://farm'+ obj.flickrResponseObject.photos.photo[0].farm +
-				'.staticflickr.com/' +
-				obj.flickrResponseObject.photos.photo[0].server + '/' +
-				obj.flickrResponseObject.photos.photo[0].id + '_' + obj.flickrResponseObject.photos.photo[0].secret +
-				'.jpg';
-				obj.flickTag = '<br><a target="_blank" href="' + obj.flickrURL + '">Click this to see Flickr image relating to ' + obj.spotName + '</a>';
-				obj.infowindow.setContent(obj.contentData + obj.additionalContent + obj.flickTag);
+				if (obj.flickrResponseObject.photos.photo.length > 0) {
+					obj.flickrURL = 'https://farm'+ obj.flickrResponseObject.photos.photo[0].farm +
+					'.staticflickr.com/' +
+					obj.flickrResponseObject.photos.photo[0].server + '/' +
+					obj.flickrResponseObject.photos.photo[0].id + '_' + obj.flickrResponseObject.photos.photo[0].secret +
+					'.jpg';
+					obj.flickTag = '<br><a target="_blank" href="' + obj.flickrURL + '">Click this to see Flickr image relating to ' + obj.spotName + '</a>';
+					obj.infowindow.setContent(obj.contentData + obj.additionalContent + obj.flickTag);
+				}
+				else {
+					obj.flickTag = '<br>Could not load Flickr picture. Error with Flickr data';
+					obj.infowindow.setContent(obj.contentData + obj.additionalContent + obj.flickTag);
+				}
 			}).fail(function(){
-				console.log('error fetching flickr data');
 				// infowindow fail message
 				var obj =  self.neighborhoodsData()[index];
 				obj.flickTag = '<br>Could not load Flickr picture. Please try click Neighborhood spot again';

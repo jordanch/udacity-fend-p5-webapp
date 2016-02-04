@@ -13,17 +13,6 @@ Credit to the following:
 		<title>Do Durban - activity finder</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="css/style.css">
-		<script src="js/lib/knockout-3.4.0.js"></script>
-		<script src="js/lib/jquery-2.2.0.min.js"></script>
-		<script src="js/lib/fuse.min.js"></script>
-		<script src="js/error_handling.js"></script>
-		<script
-				async
-				defer
-				src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM&callback=init"
-				onerror="googleError()">
-		</script>
-		<script defer src="js/app.js"></script>
 	</head>
 	<body>
 		<div class='grid'> <!-- wrapper div -->
@@ -32,7 +21,7 @@ Credit to the following:
 				<!-- menu sub view: search and nav functions -->
 				<div id='nav'>
 					<form data-bind='submit: searchButtonClick'>
-						<label>Filter using name:</label><input id='search_bar' type='text' data-bind='value: currentSearchValue'/>
+						<label>Filter using name. Use "" for specific search:</label><input id='search_bar' type='text' data-bind='value: currentSearchValue'/>
 						<div>
 							<button type='submit'>Submit</button>
 						</div>
@@ -64,5 +53,16 @@ Credit to the following:
 				<div id='wait' data-bind='visible: mapIsLoading, text: loadingMessage'></div>
 			</div>
 		</div>
+		<script src="js/lib/knockout-3.4.0.js"></script>
+		<script src="js/lib/jquery-2.2.0.min.js"></script>
+		<script src="js/lib/fuse.min.js"></script>
+		<script src="js/error_handling.js"></script>
+		<script
+				async
+				defer
+				src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT4hPk1A042B1lW5gjL78aY9zmTwLZNDM&callback=init"
+				onerror="googleError()">
+		</script>
+		<script defer src="js/app.js"></script>
 	</body>
 </html>
