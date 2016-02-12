@@ -1,6 +1,6 @@
 Udacity Front End Web Developer nanodegree Project 5: Neighbourhood location web application
 
-This project's requirements includes using Google's Map API along with another third-party data API. I used Flickr's API.
+This project's requirements includes using Google's Map API along with another third-party data API. I used Flickr's API. The project features required the use of APIs, MVVM, JSON, asynchronous ajax calls, error handling, search functionality and jQuery.
 
 Below are the project's requirements from Udacity:
 
